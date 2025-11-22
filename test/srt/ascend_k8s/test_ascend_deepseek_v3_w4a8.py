@@ -119,7 +119,8 @@ class TestDeepseek_w8a8(CustomTestCase):
             return_stdout_stderr=(out_log_file, err_log_file),
         )
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/health_generate")
-        self.assertEqual(response.status_code, 200)
+        print(response)
+        cls.assertEqual(response.status_code, 200)
 
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
@@ -128,8 +129,9 @@ class TestDeepseek_w8a8(CustomTestCase):
                 "sampling_params": {"temperature": 0, "max_new_tokens": 32},
             },
         )
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Paris", response.text)
+        print(response)
+        cls.assertEqual(response.status_code, 200)
+        cls.assertIn("Paris", response.text)
         out_log_file.seek(0)
         content = out_log_file.read()
         print("=========================================req response================================================")
@@ -176,7 +178,8 @@ class TestDeepseek_w8a8(CustomTestCase):
         )
         run_command("mkdir ./benchmark/ais_bench/datasets/gsm8k")
         run_command(
-            "\cp /root/.cache/modelscope/hub/datasets/vllm-ascend/GSM8K-in3500-bs2800/test.jsonl ./benchmark/ais_bench/datasets/gsm8k/"
+            # "\cp /root/.cache/modelscope/hub/datasets/vllm-ascend/GSM8K-in3500-bs2800/test.jsonl ./benchmark/ais_bench/datasets/gsm8k/"
+            "\cp /root/.cache/modelscope/hub/datasets/Howeee/GSM8K-in3584-bs8192/test.jsonl ./benchmark/ais_bench/datasets/gsm8k/"
         )
         run_command("touch ./benchmark/ais_bench/datasets/gsm8k/train.jsonl")
         ais_res = run_command("pip3 install -e ./benchmark/")
