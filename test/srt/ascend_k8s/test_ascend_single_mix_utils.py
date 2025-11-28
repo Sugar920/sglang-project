@@ -11,7 +11,7 @@ from sglang.test.test_utils import (
 
 QWEN3_32B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/aleoyang/Qwen3-32B-w8a8-MindIE"
 QWEN3_235B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/vllm-ascend/Qwen3-235B-A22B-W8A8"
-DEEPSEEK_R1_0528_W8A8_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Howeee/DeepSeek-R1-0528-w8a8"
+DEEPSEEK_R1_0528_W4A8_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Howeee/DeepSeek-R1-0528-w4a8"
 QWEN3_32B_OTHER_ARGS = (
     [
         "--trust-remote-code",
@@ -121,7 +121,7 @@ QWEN3_235B_ENVS = {
     "ENABLE_ASCEND_MOE_NZ": "1",
 }
 
-DEEPSEEK_R1_0528_W8A8_ENVS = {
+DEEPSEEK_R1_0528_W4A8_ENVS = {
     "SGLANG_SET_CPU_AFFINITY": "1",
     "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
     "STREAMS_PER_DEVICE": "32",
@@ -137,7 +137,7 @@ DEEPSEEK_R1_0528_W8A8_ENVS = {
     "ENABLE_MOE_NZ": "1",
 }
 
-DEEPSEEK_R1_0528_W8A8_OTHER_ARGS = (
+DEEPSEEK_R1_0528_W4A8_OTHER_ARGS = (
     [
         "--tp",
         "16",
