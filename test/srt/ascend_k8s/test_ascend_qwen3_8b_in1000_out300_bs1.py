@@ -8,7 +8,7 @@ from test_ascend_single_mix_utils import (
 )
 
 
-class TestQWEN3_8B(TestSingleMixUtils):
+class TestQwen3_8B(TestSingleMixUtils):
     model = QWEN3_8B_MODEL_PATH
     dataset = (
         "/data/ascend-ci-share-pkking-sglang/modelscope/hub/datasets/Qwen3-32B-w8a8-MindIE/GSM8K-in3500-bs5000/test.jsonl")
