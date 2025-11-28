@@ -231,7 +231,7 @@ def launch_router():
     nodes_count = discover_worker_nodes()
     print(f"launch_router nodes_count {nodes_count=}")
 
-    # monitor configmap to generate p/d url
+    # monitor  to generate p/d url
     prefill_url = []
     decode_url = []
     bootstrap_ports = []
