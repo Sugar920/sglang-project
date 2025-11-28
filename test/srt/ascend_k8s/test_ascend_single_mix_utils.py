@@ -234,7 +234,7 @@ class TestSingleMixUtils(CustomTestCase):
     def tearDownClass(cls):
         kill_process_tree(cls.process.pid)
 
-    def run_gsm8k(self):
+    def run_ais_bench(self):
         port = self.base_url.split(":")[-1]
         run_command("rm -rf ./benchmark")
         run_command("pip3 install nltk==3.8")
