@@ -210,6 +210,7 @@ class TestSingleMixUtils(CustomTestCase):
     max_out_len = None
     batch_size = 78
     num_prompts = int(batch_size) * 4
+    ttft = None
     tpot = None
     output_token_throughput = None
 
@@ -284,6 +285,10 @@ class TestSingleMixUtils(CustomTestCase):
         )
         res_output_token_throughput = run_command(
             "cat ./gsm8k_deepseek_log.txt | grep 'Output Token Throughput' | awk '{print $8}'"
+        )
+        self.assertLessEqual(
+            float(res_ttft),
+            self.ttft,
         )
         self.assertLessEqual(
             float(res_tpot),
