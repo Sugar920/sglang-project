@@ -13,6 +13,9 @@ QWEN3_32B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/model
 QWEN3_235B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/vllm-ascend/Qwen3-235B-A22B-W8A8"
 # DEEPSEEK_R1_0528_W4A8_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/DeepSeek-R1-0528-w4a8"
 DEEPSEEK_R1_0528_W4A8_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Howeee/DeepSeek-R1-0528-w8a8"
+QWEN3_30B_A3B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen/Qwen3-30B-A3B"
+QWEN3_CODER_480B_A35B_INSTRUCT_W8A8_QUAROT_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen3-Coder-480B-A35B-Instruct-w8a8-QuaRot"
+QWEN3_8B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen/Qwen3-8B"
 QWEN3_32B_OTHER_ARGS = (
     [
         "--trust-remote-code",
@@ -122,22 +125,6 @@ QWEN3_235B_ENVS = {
     "ENABLE_ASCEND_MOE_NZ": "1",
 }
 
-DEEPSEEK_R1_0528_W4A8_ENVS = {
-    "SGLANG_SET_CPU_AFFINITY": "1",
-    "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
-    "STREAMS_PER_DEVICE": "32",
-    "HCCL_SOCKET_IFNAME": "lo",
-    "GLOO_SOCKET_IFNAME": "lo",
-    "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "32",
-    "HCCL_BUFFSIZE": "1600",
-    "DEEP_NORMAL_MODE_USE_INT8_QUANT": "1",
-    "SGLANG_NPU_USE_MLAPO": "1",
-    "SGLANG_ENABLE_SPEC_V2": "1",
-    "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": "1",
-    "SGLANG_USE_FIA_NZ": "1",
-    "ENABLE_MOE_NZ": "1",
-}
-
 DEEPSEEK_R1_0528_W4A8_OTHER_ARGS = (
     [
         "--tp",
@@ -190,6 +177,63 @@ DEEPSEEK_R1_0528_W4A8_OTHER_ARGS = (
         "bfloat16",
     ]
 )
+
+DEEPSEEK_R1_0528_W4A8_ENVS = {
+    "SGLANG_SET_CPU_AFFINITY": "1",
+    "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
+    "STREAMS_PER_DEVICE": "32",
+    "HCCL_SOCKET_IFNAME": "lo",
+    "GLOO_SOCKET_IFNAME": "lo",
+    "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "32",
+    "HCCL_BUFFSIZE": "1600",
+    "DEEP_NORMAL_MODE_USE_INT8_QUANT": "1",
+    "SGLANG_NPU_USE_MLAPO": "1",
+    "SGLANG_ENABLE_SPEC_V2": "1",
+    "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": "1",
+    "SGLANG_USE_FIA_NZ": "1",
+    "ENABLE_MOE_NZ": "1",
+}
+
+QWEN3_30B_A3B_OTHER_ARGS = (
+    [
+        "--tp",
+        "1",
+        "--trust-remote-code",
+        "--attention-backend",
+        "ascend",
+        "--device",
+        "npu",
+        "--watchdog-timeout",
+        "9000",
+        "--mem-fraction-static",
+        "0.9",
+        "--max-running-requests",
+        "48",
+        "--cuda-graph-bs",
+        "48",
+        "--dtype",
+        "bfloat16",
+        "--disable-radix-cache",
+        "--chunked-prefill-size",
+        "15360",
+        "--max-prefill-tokens",
+        "15360",   
+    ]
+)
+
+QWEN3_30B_A3B_ENVS = {
+    "SGLANG_SET_CPU_AFFINITY": "1",
+    "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
+    "STREAMS_PER_DEVICE": "32",
+    "HCCL_SOCKET_IFNAME": "lo",
+    "GLOO_SOCKET_IFNAME": "lo",
+    "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "32",
+    "HCCL_BUFFSIZE": "1536",
+    "SGLANG_USE_FIA_NZ": "1",
+    "SGLANG_DEEPEP_BF16_DISPATCH": "1",
+    "HCCL_OP_EXPANSION_MODE": "AIV",
+}
+
 
 def run_command(cmd, shell=True):
     try:
