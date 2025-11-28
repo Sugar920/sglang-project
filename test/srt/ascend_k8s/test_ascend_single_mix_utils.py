@@ -11,7 +11,8 @@ from sglang.test.test_utils import (
 
 QWEN3_32B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/aleoyang/Qwen3-32B-w8a8-MindIE"
 QWEN3_235B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/vllm-ascend/Qwen3-235B-A22B-W8A8"
-DEEPSEEK_R1_0528_W4A8_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Howeee/DeepSeek-R1-0528-w4a8"
+# DEEPSEEK_R1_0528_W4A8_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/DeepSeek-R1-0528-w4a8"
+DEEPSEEK_R1_0528_W4A8_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Howeee/DeepSeek-R1-0528-w8a8"
 QWEN3_32B_OTHER_ARGS = (
     [
         "--trust-remote-code",
@@ -152,14 +153,16 @@ DEEPSEEK_R1_0528_W4A8_OTHER_ARGS = (
         "9000",
         "--cuda-graph-bs",
         "8",
-        "16",
-        "24",
-        "28",
-        "32",
+        # "16",
+        # "24",
+        # "28",
+        # "32",
         "--mem-fraction-static",
-        "0.68",
+        # "0.68",
+        "0.8",
         "--max-running-requests",
-        "128",
+        # "128",
+        "8",
         "--context-length",
         "8188",
         "--disable-radix-cache",
@@ -273,6 +276,9 @@ class TestSingleMixUtils(CustomTestCase):
             f"ais_bench --models vllm_api_stream_chat --datasets gsm8k_gen_0_shot_cot_str_perf --debug --summarizer default_perf --mode perf --num-prompts {self.num_prompts} | tee ./gsm8k_deepseek_log.txt"
         )
         print("metrics is " + str(metrics))
+        res_ttft = run_command(
+            "cat ./gsm8k_deepseek_log.txt | grep TTFT | awk '{print $6}'"
+        )
         res_tpot = run_command(
             "cat ./gsm8k_deepseek_log.txt | grep TPOT | awk '{print $6}'"
         )
