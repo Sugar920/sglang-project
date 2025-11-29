@@ -40,10 +40,6 @@ MODEL_CONFIG = {
     "prefill_args": [
         "--disaggregation-mode",
         "prefill",
-        "--nnodes",
-        1,
-        "--node-rank",
-        0,
         "--tp-size",
         16,
         "--mem-fraction-static",
@@ -81,10 +77,6 @@ MODEL_CONFIG = {
     "decode_args": [
         "--disaggregation-mode",
         "decode",
-        "--nnodes",
-        2,
-        "--node-rank",
-        0,
         "--tp-size",
         32,
         "--dp-size",
