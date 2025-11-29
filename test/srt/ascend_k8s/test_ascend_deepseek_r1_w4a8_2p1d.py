@@ -146,21 +146,20 @@ DEEPSEEK_R1_CONFIG = {
 }
 
 
-class TestQwen3_30B_A3B(TestSingleMixUtils):
-    model = QWEN3_30B_A3B_MODEL_PATH
-    dataset = (
-        "/data/ascend-ci-share-pkking-sglang/modelscope/hub/datasets/Qwen3-32B-w8a8-MindIE/GSM8K-in3500-bs5000/test.jsonl")
-    other_args = QWEN3_30B_A3B_OTHER_ARGS
-    envs = QWEN3_30B_A3B_ENVS
-    max_out_len = 300
-    batch_size = 16
-    num_prompts = int(batch_size) * 4
-    tpot = 100
-    output_token_throughput = 300
+class Test_DeepSeek_R1_W4A8_2P1D(TestAscendDisaggregationUtils):
+    model_config = MODEL_CONFIG
+    request_rate = None
+    max_concurrency = 8
+    num_prompts = int(max_concurrency) * 4
+    input_len = None
+    output_len = None
+    random_range_ratio = 0.5
+    ttft = None
+    tpot = None
+    output_token_throughput = None
 
-    def test_qwen3_30b_a3b(self):
-        self.run_ais_bench()
-
+    def test_throughput(self):
+        self.run_random()
 
 if __name__ == "__main__":
     unittest.main()
