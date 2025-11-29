@@ -17,7 +17,7 @@ MODEL_CONFIG = {
         "ENABLE_MOE_NZ": "1",
         "SGLANG_USE_AG_AFTER_QLORA": "1",
         "HCCL_BUFFSIZE": "1536",
-        "DEEP_NORMAL_MODE_USE_INT*_QUANT": "1",
+        "DEEP_NORMAL_MODE_USE_INT8_QUANT": "1",
         "TASK_QUEUE_ENABLE": "2",
         "HCCL_SOCKET_IFNAME": "lo",
         "GLOO_SOCKET_IFNAME": "lo",
