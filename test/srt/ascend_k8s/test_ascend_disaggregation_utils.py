@@ -198,6 +198,8 @@ def launch_node(config):
         "--trust-remote-code",
         "--attention-backend",
         "ascend",
+        "--device",
+        "npu",
         "--disaggregation-transfer-backend",
         "ascend",
     ]
