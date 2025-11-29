@@ -4,7 +4,8 @@ from test_ascend_disaggregation_utils import (
     TestAscendDisaggregationUtils,
 )
 
-MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/DeepSeek-R1-0528-w4a8"
+# MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/DeepSeek-R1-0528-w4a8"
+MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Howeee/DeepSeek-R1-0528-w8a8"
 
 MODEL_CONFIG = {
     "model_path": MODEL_PATH,
@@ -12,10 +13,9 @@ MODEL_CONFIG = {
         "SGLANG_SET_CPU_AFFIMITY": "1",
         "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
         "STREAMS_PER_DEVICE": "32",
-        # "ASCEND_MF_STORE_URL": "tcp://ip:port",
         "SGLANG_NPU_USE_MLAPO": "1",
         "SGLANG_USE_FIA_NZ": "1",
-        # "ENABLE_MOE_NZ": "1",
+        "ENABLE_MOE_NZ": "1",
         "SGLANG_USE_AG_AFTER_QLORA": "1",
         "HCCL_BUFFSIZE": "1536",
         "DEEP_NORMAL_MODE_USE_INT*_QUANT": "1",
@@ -27,16 +27,16 @@ MODEL_CONFIG = {
         "SGLANG_SET_CPU_AFFIMITY": "1",
         "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
         "STREAMS_PER_DEVICE": "32",
-        # "ASCEND_MF_STORE_URL": "tcp://ip:port",
         "SGLANG_NPU_USE_MLAPO": "1",
         "SGLANG_USE_FIA_NZ": "1",
-        # "ENABLE_MOE_NZ": "1",
+        "ENABLE_MOE_NZ": "1",
         "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": "1",
         "SGLANG_ENABLE_SPEC_V2": "1",
         "HCCL_BUFFSIZE": "600",
         "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "78",
-        # "HCCL_SOCKET_IFNAME": "data0.3001",
-        # "GLOO_SOCKET_IFNAME": "data0.3001",     
+        "TASK_QUEUE_ENABLE": "0",
+        "HCCL_SOCKET_IFNAME": "lo",
+        "GLOO_SOCKET_IFNAME": "lo",     
     },
     "prefill_args": [
         "--disaggregation-mode",
