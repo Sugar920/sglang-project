@@ -27,8 +27,8 @@ from sglang.test.test_utils import (
     run_bench_offline_throughput,
 )
 
-MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Howeee/DeepSeek-R1-0528-w8a8"
-DATA_PATH = "/data/.cache/GSM8K-in3584-bs8192.jsonl"
+DEEPSEEK_R1_0528_W4A8_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/DeepSeek-R1-0528-w4a8"
+DEEPSEEK_R1_0528_W8A8_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Howeee/DeepSeek-R1-0528-w8a8"
 KUBE_CONFIG = "/data/.cache/kb.yaml"
 NAMESPACE = "kube-system"
 CONFIGMAP_NAME = "sglang-info"
@@ -36,9 +36,6 @@ LOACL_TIMEOUT = 6000
 
 config.load_kube_config(KUBE_CONFIG)
 v1 = client.CoreV1Api()
-
-
-class Test_Disaggregation(CustomTestCase):
 
 DEEPSEEK_R1_CONFIG = {
     "model_path": MODEL_PATH,
@@ -70,6 +67,8 @@ DEEPSEEK_R1_CONFIG = {
         # "GLOO_SOCKET_IFNAME": "data0.3001",
     },
     "prefill_args": [
+        "--quantization",
+        "w8a8_int8",
         "--disaggregation-mode",
         "prefill",
         "--nnodes",
@@ -116,6 +115,8 @@ DEEPSEEK_R1_CONFIG = {
         "--disable-cuda-graph",
     ],
     "decode_args": [
+        "--quantization",
+        "w8a8_int8",
         "--disaggregation-mode",
         "decode",
         "--tp-size",
@@ -289,17 +290,17 @@ def launch_router():
     ]
 
     for index, url in enumerate(prefill_url):
-        lb_command.append("--prefill")
-        lb_command.append(f"http://{url}")
-        lb_command.append(f"{bootstrap_ports[index]}")
+        router_command.append("--prefill")
+        router_command.append(f"http://{url}")
+        router_command.append(f"{bootstrap_ports[index]}")
 
     for url in decode_url:
-        lb_command.append("--decode")
-        lb_command.append("http://" + url)
-    lb_command_str = " ".join(lb_command)
-    print(f"Starting router, {lb_command_str=}")
-    # subprocess.Popen(lb_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    subprocess.Popen(lb_command_str, shell=True)
+        router_command.append("--decode")
+        router_command.append("http://" + url)
+    router_command_str = " ".join(router_command)
+    print(f"Starting router, {router_command_str=}")
+    # subprocess.Popen(router_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.Popen(router_command_str, shell=True)
 
 
 # launch p/d node
@@ -338,8 +339,6 @@ def launch_node(config):
         "--trust-remote-code",
         "--attention-backend",
         "ascend",
-        "--quantization",
-        "w8a8_int8",
         "--disaggregation-transfer-backend",
         "ascend",
     ]
@@ -406,6 +405,16 @@ def launch_node(config):
 
 
 class TestAscendDisaggregation(CustomTestCase):
+    model_config = None
+    request_rate = None
+    max_concurrency = 8
+    num_prompts = int(max_concurrency) * 4
+    input_len = None
+    output_len = None
+    random_range_ratio = 0.5
+    ttft = None
+    tpot = None
+    output_token_throughput = None
 
     @classmethod
     def setUpClass(cls):
@@ -430,7 +439,7 @@ class TestAscendDisaggregation(CustomTestCase):
                 raise RuntimeError(f"Server {url} failed to start in {timeout}s")
             time.sleep(10)
 
-    def run_gsm8k(self):
+    def run_bench_random(self):
         if self.role == "router":
             router_thread = threading.Thread(target=launch_router)
             router_thread.start()
@@ -440,51 +449,26 @@ class TestAscendDisaggregation(CustomTestCase):
             time.sleep(120)
             
             port = self.base_url.split(":")[-1]
-            run_command("rm -rf ./benchmark")
-            run_command("pip3 install nltk==3.8")
-            run_command("git clone https://gitee.com/aisbench/benchmark.git")
-            run_command(
-                f'sed -i \'s#path="[^"]*"#path="{self.model}"#\' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py'
-            )
-            run_command(
-                'sed -i \'s/model="[^"]*"/model="Qwen3"/\' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py'
-            )
-            run_command(
-                "sed -i 's/request_rate = [^\"]*/request_rate = 5.5,/' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py"
-            )
-            run_command(
-                'sed -i \'s/host_ip = "[^"]*"/host_ip = "127.0.0.1"/\' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py'
-            )
-            run_command(
-                f"sed -i 's/host_port = [^\"]*/host_port = {port},/' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py"
-            )
-            run_command(
-                f"sed -i 's/max_out_len = [^\"]*/max_out_len = {self.max_out_len},/' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py"
-            )
-            run_command(
-                f"sed -i 's/batch_size=[^\"]*/batch_size={self.batch_size},/' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py"
-            )
-            run_command(
-                r"""sed -i '/generation_kwargs = dict(/,/),/c\        generation_kwargs = dict(\n            temperature = 0,\n            ignore_eos = True,\n        ),'  ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py"""
-            )
-            run_command("mkdir ./benchmark/ais_bench/datasets/gsm8k")
-            run_command(f"\cp {self.dataset} ./benchmark/ais_bench/datasets/gsm8k/")
-            run_command("touch ./benchmark/ais_bench/datasets/gsm8k/train.jsonl")
-            ais_res = run_command("pip3 install -e ./benchmark/")
-            print(str(ais_res))
-            cat_res = run_command(
-                "cat ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py"
-            )
-            print("cat_res is " + str(cat_res))
+            # metrics = run_command(
+            #     f"ais_bench --models vllm_api_stream_chat --datasets gsm8k_gen_0_shot_cot_str_perf --debug --summarizer default_perf --mode perf --num-prompts {self.num_prompts} | tee ./bench_log.txt"
+            # )
+
             metrics = run_command(
-                f"ais_bench --models vllm_api_stream_chat --datasets gsm8k_gen_0_shot_cot_str_perf --debug --summarizer default_perf --mode perf --num-prompts {self.num_prompts} | tee ./gsm8k_deepseek_log.txt"
+                f"python3 -m sglang.bench_servimg --dataset-name random --request-rate {self.request_rate} --max-concurrency {self.max_concurrency} --num-prompts {self.num_prompts} --random-input-len {self.input_len} --random-output-len {self.output_len} --random-range-ratio {self.random_range_ratio} | tee ./bench_log.txt"
             )
             print("metrics is " + str(metrics))
+            res_ttft = run_command(
+                "cat ./bench_log.txt | grep TTFT | awk '{print $6}'"
+            )
             res_tpot = run_command(
-                "cat ./gsm8k_deepseek_log.txt | grep TPOT | awk '{print $6}'"
+                "cat ./bench_log.txt | grep TPOT | awk '{print $6}'"
             )
             res_output_token_throughput = run_command(
-                "cat ./gsm8k_deepseek_log.txt | grep 'Output Token Throughput' | awk '{print $8}'"
+                "cat ./bench_log.txt | grep 'Output Token Throughput' | awk '{print $8}'"
+            )
+            self.assertLessEqual(
+                float(res_ttft),
+                self.ttft,
             )
             self.assertLessEqual(
                 float(res_tpot),
@@ -497,7 +481,7 @@ class TestAscendDisaggregation(CustomTestCase):
         else:
             # launch p/d node
             sglang_thread = threading.Thread(
-                target=launch_node, args=(DEEPSEEK_R1_CONFIG,)
+                target=launch_node, args=(self.model_config,)
             )
             sglang_thread.start()
             time.sleep(LOACL_TIMEOUT)
