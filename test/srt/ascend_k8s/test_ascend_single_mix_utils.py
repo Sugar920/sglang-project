@@ -232,7 +232,7 @@ def run_bench_serving(dataset_name="random", request_rate=8, max_concurrency=8, 
                       random_range_ratio=0.5):
     num_prompts = max_concurrency * 4
     metrics = run_command(
-        f"python3 -m sglang.bench_servimg --dataset-name {dataset_name} --request-rate {request_rate} "
+        f"python3 -m sglang.bench_serving --dataset-name {dataset_name} --request-rate {request_rate} "
         f"--max-concurrency {max_concurrency} --num-prompts {num_prompts} --random-input-len {input_len} "
         f"--random-output-len {output_len} --random-range-ratio {random_range_ratio} | tee ./bench_log.txt"
     )
