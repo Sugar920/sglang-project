@@ -6,7 +6,7 @@ from test_ascend_disaggregation_utils import (
 
 MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/DeepSeek-R1-0528-w4a8"
 
-DEEPSEEK_R1_CONFIG = {
+MODEL_CONFIG = {
     "model_path": MODEL_PATH,
     "prefill_envs": {
         "SGLANG_USE_MLAPO": "1",
@@ -148,6 +148,7 @@ DEEPSEEK_R1_CONFIG = {
 
 class Test_DeepSeek_R1_W4A8_1P1D(TestAscendDisaggregationUtils):
     model_config = MODEL_CONFIG
+    dataset_name = "random"
     request_rate = None
     max_concurrency = 8
     num_prompts = int(max_concurrency) * 4
@@ -159,7 +160,7 @@ class Test_DeepSeek_R1_W4A8_1P1D(TestAscendDisaggregationUtils):
     output_token_throughput = None
 
     def test_throughput(self):
-        self.run_random()
+        self.run_throughput()
 
 
 if __name__ == "__main__":

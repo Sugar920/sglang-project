@@ -148,6 +148,7 @@ MODEL_CONFIG = {
 
 class Test_DeepSeek_R1_W8A8_1P1D(TestAscendDisaggregationUtils):
     model_config = MODEL_CONFIG
+    dataset_name = "random"
     request_rate = None
     max_concurrency = 8
     num_prompts = int(max_concurrency) * 4
@@ -159,7 +160,7 @@ class Test_DeepSeek_R1_W8A8_1P1D(TestAscendDisaggregationUtils):
     output_token_throughput = None
 
     def test_throughput(self):
-        self.run_random()
+        self.run_throughput()
 
 
 if __name__ == "__main__":

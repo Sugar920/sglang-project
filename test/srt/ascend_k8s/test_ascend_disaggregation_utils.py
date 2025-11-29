@@ -35,6 +35,7 @@ LOACL_TIMEOUT = 6000
 config.load_kube_config(KUBE_CONFIG)
 v1 = client.CoreV1Api()
 
+
 def run_command(cmd, shell=True):
     try:
         result = subprocess.run(
@@ -262,8 +263,19 @@ def launch_node(config):
     )
 
 
+def run_bench_serving(dataset_name="random", request_rate=8, max_concurrency=8, input_len=1024, output_len=1024, random_range_ratio=0.5):
+    num_prompts = max_concurrency * 4
+    metrics = run_command(
+        f"python3 -m sglang.bench_servimg --dataset-name {dataset_name} --request-rate {request_rate} "
+        f"--max-concurrency {max_concurrency} --num-prompts {num_prompts} --random-input-len {input_len} "
+        f"--random-output-len {output_len} --random-range-ratio {random_range_ratio} | tee ./bench_log.txt"
+    )
+    return metrics
+
+
 class TestAscendDisaggregationUtils(CustomTestCase):
     model_config = None
+    dataset_name = None
     request_rate = None
     max_concurrency = 8
     num_prompts = int(max_concurrency) * 4
@@ -297,7 +309,7 @@ class TestAscendDisaggregationUtils(CustomTestCase):
                 raise RuntimeError(f"Server {url} failed to start in {timeout}s")
             time.sleep(10)
 
-    def run_bench_random(self):
+    def run_throughput(self):
         if self.role == "router":
             router_thread = threading.Thread(target=launch_router)
             router_thread.start()
@@ -305,15 +317,8 @@ class TestAscendDisaggregationUtils(CustomTestCase):
 
             print(f"Wait 120s, starting run benchmark ......")
             time.sleep(120)
-            
-            port = self.base_url.split(":")[-1]
-            # metrics = run_command(
-            #     f"ais_bench --models vllm_api_stream_chat --datasets gsm8k_gen_0_shot_cot_str_perf --debug --summarizer default_perf --mode perf --num-prompts {self.num_prompts} | tee ./bench_log.txt"
-            # )
 
-            metrics = run_command(
-                f"python3 -m sglang.bench_servimg --dataset-name random --request-rate {self.request_rate} --max-concurrency {self.max_concurrency} --num-prompts {self.num_prompts} --random-input-len {self.input_len} --random-output-len {self.output_len} --random-range-ratio {self.random_range_ratio} | tee ./bench_log.txt"
-            )
+            metrics = run_bench_serving(self.dataset_name, self.request_rate, self.max_concurrency, self.input_len, self.output_len, self.random_range_ratio)
             print("metrics is " + str(metrics))
             res_ttft = run_command(
                 "cat ./bench_log.txt | grep TTFT | awk '{print $6}'"
