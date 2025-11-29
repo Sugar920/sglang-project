@@ -4,6 +4,7 @@ from test_ascend_disaggregation_utils import (
     TestAscendDisaggregationUtils,
 )
 
+# MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/DeepSeek-R1-0528-w4a8"
 MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Howeee/DeepSeek-R1-0528-w8a8"
 
 MODEL_CONFIG = {
@@ -12,13 +13,12 @@ MODEL_CONFIG = {
         "SGLANG_SET_CPU_AFFIMITY": "1",
         "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
         "STREAMS_PER_DEVICE": "32",
-        # "ASCEND_MF_STORE_URL": "tcp://ip:port",
         "SGLANG_NPU_USE_MLAPO": "1",
         "SGLANG_USE_FIA_NZ": "1",
-        # "ENABLE_MOE_NZ": "1",
+        "ENABLE_MOE_NZ": "1",
         "SGLANG_USE_AG_AFTER_QLORA": "1",
         "HCCL_BUFFSIZE": "1536",
-        "DEEP_NORMAL_MODE_USE_INT*_QUANT": "1",
+        "DEEP_NORMAL_MODE_USE_INT8_QUANT": "1",
         "TASK_QUEUE_ENABLE": "2",
         "HCCL_SOCKET_IFNAME": "lo",
         "GLOO_SOCKET_IFNAME": "lo",
@@ -27,28 +27,24 @@ MODEL_CONFIG = {
         "SGLANG_SET_CPU_AFFIMITY": "1",
         "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
         "STREAMS_PER_DEVICE": "32",
-        # "ASCEND_MF_STORE_URL": "tcp://ip:port",
         "SGLANG_NPU_USE_MLAPO": "1",
         "SGLANG_USE_FIA_NZ": "1",
-        # "ENABLE_MOE_NZ": "1",
+        "ENABLE_MOE_NZ": "1",
         "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": "1",
         "SGLANG_ENABLE_SPEC_V2": "1",
-        "HCCL_BUFFSIZE": "600",
-        "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "78",
-        # "HCCL_SOCKET_IFNAME": "data0.3001",
-        # "GLOO_SOCKET_IFNAME": "data0.3001",     
+        "HCCL_BUFFSIZE": "720",
+        "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "88",
+        "TASK_QUEUE_ENABLE": "0",
+        "HCCL_SOCKET_IFNAME": "lo",
+        "GLOO_SOCKET_IFNAME": "lo",     
     },
     "prefill_args": [
         "--disaggregation-mode",
         "prefill",
-        "--nnodes",
-        1,
-        "--node-rank",
-        0,
         "--tp-size",
         16,
         "--mem-fraction-static",
-        0.81,
+        0.6,
         "--quantization",
         "w8a8_int8",
         "--max-running-requests",
@@ -82,10 +78,6 @@ MODEL_CONFIG = {
     "decode_args": [
         "--disaggregation-mode",
         "decode",
-        "--nnodes",
-        2,
-        "--node-rank",
-        0,
         "--tp-size",
         32,
         "--dp-size",
@@ -93,7 +85,7 @@ MODEL_CONFIG = {
         "--mem-fraction-static",
         0.8,
         "--max-running-requests",
-        832,
+        352,
         "--quantization",
         "w8a8_int8",
         "--moe-a2a-backend",
@@ -111,8 +103,6 @@ MODEL_CONFIG = {
         18,
         20,
         22,
-        24,
-        26,
         "--watchdog-timeout",
         9000,
         "--context-length",
@@ -120,11 +110,11 @@ MODEL_CONFIG = {
         "--speculative-algorithm",
         "NEXTN",
         "--speculative-num-steps",
-        2,
+        3,
         "--speculative-eagle-topk",
         1,
         "--speculative-num-draft-tokens",
-        3,
+        4,
         "--tokenizer-worker-num",
         4,
         "--disable-shared-experts-fusion",
@@ -139,7 +129,7 @@ class Test_DeepSeek_R1_W4A8_1P1D_In3500_Out1500(TestAscendDisaggregationUtils):
     model_config = MODEL_CONFIG
     dataset_name = "random"
     request_rate = 16
-    max_concurrency = 8
+    max_concurrency = 352
     num_prompts = int(max_concurrency) * 4
     input_len = 2048
     output_len = 2048
