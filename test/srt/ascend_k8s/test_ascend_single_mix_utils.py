@@ -1,7 +1,6 @@
 import os
 import subprocess
 
-from test_ascend_disaggregation_utils import run_bench_serving
 from sglang.srt.utils import is_npu, kill_process_tree
 from sglang.test.test_utils import (
     DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
@@ -229,6 +228,15 @@ def run_command(cmd, shell=True):
         print(f"command error: {e}")
         return None
 
+def run_bench_serving(dataset_name="random", request_rate=8, max_concurrency=8, input_len=1024, output_len=1024,
+                      random_range_ratio=0.5):
+    num_prompts = max_concurrency * 4
+    metrics = run_command(
+        f"python3 -m sglang.bench_servimg --dataset-name {dataset_name} --request-rate {request_rate} "
+        f"--max-concurrency {max_concurrency} --num-prompts {num_prompts} --random-input-len {input_len} "
+        f"--random-output-len {output_len} --random-range-ratio {random_range_ratio} | tee ./bench_log.txt"
+    )
+    return metrics
 
 class TestSingleMixUtils(CustomTestCase):
     model = None
@@ -262,7 +270,7 @@ class TestSingleMixUtils(CustomTestCase):
     def tearDownClass(cls):
         kill_process_tree(cls.process.pid)
 
-    def run_bench_serving(self):
+    def run_throughput(self):
         metrics = run_bench_serving(
             dataset_name=self.dataset_name,
             request_rate=self.request_rate,
@@ -271,6 +279,7 @@ class TestSingleMixUtils(CustomTestCase):
             output_len=self.output_len,
             random_range_ratio=self.random_range_ratio,
         )
+
         print("metrics is " + str(metrics))
         # res_ttft = run_command(
         #     "cat ./bench_log.txt | grep TTFT | awk '{print $6}'"
