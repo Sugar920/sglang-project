@@ -135,7 +135,7 @@ MODEL_CONFIG = {
 }
 
 
-class Test_DeepSeek_R1_W8A8_2P1D(TestAscendDisaggregationUtils):
+class Test_DeepSeek_R1_W8A8_2P1D_In2048_Out2048(TestAscendDisaggregationUtils):
     model_config = MODEL_CONFIG
     dataset_name = "random"
     request_rate = 16
