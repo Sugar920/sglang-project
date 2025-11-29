@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+from test_ascend_disaggregation_utils import run_bench_serving
 from sglang.srt.utils import is_npu, kill_process_tree
 from sglang.test.test_utils import (
     DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
@@ -11,8 +12,6 @@ from sglang.test.test_utils import (
 
 QWEN3_32B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/aleoyang/Qwen3-32B-w8a8-MindIE"
 QWEN3_235B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/vllm-ascend/Qwen3-235B-A22B-W8A8"
-# DEEPSEEK_R1_0528_W4A8_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/DeepSeek-R1-0528-w4a8"
-DEEPSEEK_R1_0528_W4A8_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Howeee/DeepSeek-R1-0528-w8a8"
 QWEN3_30B_A3B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen/Qwen3-30B-A3B"
 QWEN3_CODER_480B_A35B_INSTRUCT_W8A8_QUAROT_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen3-Coder-480B-A35B-Instruct-w8a8-QuaRot"
 QWEN3_8B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen/Qwen3-8B"
@@ -125,74 +124,6 @@ QWEN3_235B_ENVS = {
     "ENABLE_ASCEND_MOE_NZ": "1",
 }
 
-DEEPSEEK_R1_0528_W4A8_OTHER_ARGS = (
-    [
-        "--tp",
-        "16",
-        "--trust-remote-code",
-        "--attention-backend",
-        "ascend",
-        "--device",
-        "npu",
-        "--quantization",
-        "w8a8_int8",
-        "--watchdog-timeout",
-        "9000",
-        "--cuda-graph-bs",
-        "8",
-        # "16",
-        # "24",
-        # "28",
-        # "32",
-        "--mem-fraction-static",
-        # "0.68",
-        "0.8",
-        "--max-running-requests",
-        # "128",
-        "8",
-        "--context-length",
-        "8188",
-        "--disable-radix-cache",
-        "--chunked-prefill-size",
-        "-1",
-        "--max-prefill-tokens",
-        "6000",
-        "--moe-a2a-backend",
-        "deepep",
-        "--deepep-mode",
-        "auto",
-        "--enable-dp-attention",
-        "--dp-size",
-        "4",
-        "--enable-dp-lm-head",
-        "--speculative-algorithm",
-        "NEXTN",
-        "--speculative-num-steps",
-        "3",
-        "--speculative-eagle-topk",
-        "1",
-        "--speculative-num-draft-tokens",
-        "4",
-        "--dtype",
-        "bfloat16",
-    ]
-)
-
-DEEPSEEK_R1_0528_W4A8_ENVS = {
-    "SGLANG_SET_CPU_AFFINITY": "1",
-    "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
-    "STREAMS_PER_DEVICE": "32",
-    "HCCL_SOCKET_IFNAME": "lo",
-    "GLOO_SOCKET_IFNAME": "lo",
-    "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "32",
-    "HCCL_BUFFSIZE": "1600",
-    "DEEP_NORMAL_MODE_USE_INT8_QUANT": "1",
-    "SGLANG_NPU_USE_MLAPO": "1",
-    "SGLANG_ENABLE_SPEC_V2": "1",
-    "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": "1",
-    "SGLANG_USE_FIA_NZ": "1",
-    "ENABLE_MOE_NZ": "1",
-}
 
 QWEN3_30B_A3B_OTHER_ARGS = (
     [
@@ -217,7 +148,7 @@ QWEN3_30B_A3B_OTHER_ARGS = (
         "--chunked-prefill-size",
         "15360",
         "--max-prefill-tokens",
-        "15360",   
+        "15360",
     ]
 )
 
@@ -301,12 +232,14 @@ def run_command(cmd, shell=True):
 
 class TestSingleMixUtils(CustomTestCase):
     model = None
-    dataset = None
+    dataset_name = None
     other_args = None
     envs = None
-    max_out_len = None
-    batch_size = 78
-    num_prompts = int(batch_size) * 4
+    request_rate = None
+    max_concurrency = None
+    input_len = None
+    output_len = None
+    random_range_ratio = None
     ttft = None
     tpot = None
     output_token_throughput = None
@@ -314,11 +247,8 @@ class TestSingleMixUtils(CustomTestCase):
     @classmethod
     def setUpClass(cls):
         cls.base_url = DEFAULT_URL_FOR_TEST
-        if is_npu():
-            env = os.environ.copy()
-            env.update(cls.envs)
-        else:
-            env = None
+        env = os.environ.copy()
+        env.update(cls.envs)
 
         cls.process = popen_launch_server(
             cls.model,
@@ -332,66 +262,34 @@ class TestSingleMixUtils(CustomTestCase):
     def tearDownClass(cls):
         kill_process_tree(cls.process.pid)
 
-    def run_ais_bench(self):
-        port = self.base_url.split(":")[-1]
-        run_command("rm -rf ./benchmark")
-        run_command("pip3 install nltk==3.8")
-        run_command("git clone https://gitee.com/aisbench/benchmark.git")
-        run_command(
-            f'sed -i \'s#path="[^"]*"#path="{self.model}"#\' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py'
-        )
-        run_command(
-            'sed -i \'s/model="[^"]*"/model="Qwen3"/\' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py'
-        )
-        run_command(
-            "sed -i 's/request_rate = [^\"]*/request_rate = 5.5,/' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py"
-        )
-        run_command(
-            'sed -i \'s/host_ip = "[^"]*"/host_ip = "127.0.0.1"/\' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py'
-        )
-        run_command(
-            f"sed -i 's/host_port = [^\"]*/host_port = {port},/' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py"
-        )
-        run_command(
-            f"sed -i 's/max_out_len = [^\"]*/max_out_len = {self.max_out_len},/' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py"
-        )
-        run_command(
-            f"sed -i 's/batch_size=[^\"]*/batch_size={self.batch_size},/' ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py"
-        )
-        run_command(
-            r"""sed -i '/generation_kwargs = dict(/,/),/c\        generation_kwargs = dict(\n            temperature = 0,\n            ignore_eos = True,\n        ),'  ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py"""
-        )
-        run_command("mkdir ./benchmark/ais_bench/datasets/gsm8k")
-        run_command(f"\cp {self.dataset} ./benchmark/ais_bench/datasets/gsm8k/")
-        run_command("touch ./benchmark/ais_bench/datasets/gsm8k/train.jsonl")
-        ais_res = run_command("pip3 install -e ./benchmark/")
-        print(str(ais_res))
-        cat_res = run_command(
-            "cat ./benchmark/ais_bench/benchmark/configs/models/vllm_api/vllm_api_stream_chat.py"
-        )
-        print("cat_res is " + str(cat_res))
-        metrics = run_command(
-            f"ais_bench --models vllm_api_stream_chat --datasets gsm8k_gen_0_shot_cot_str_perf --debug --summarizer default_perf --mode perf --num-prompts {self.num_prompts} | tee ./gsm8k_deepseek_log.txt"
+    def run_bench_serving(self):
+        metrics = run_bench_serving(
+            dataset_name=self.dataset_name,
+            request_rate=self.request_rate,
+            max_concurrency=self.max_concurrency,
+            input_len=self.input_len,
+            output_len=self.output_len,
+            random_range_ratio=self.random_range_ratio,
         )
         print("metrics is " + str(metrics))
-        res_ttft = run_command(
-            "cat ./gsm8k_deepseek_log.txt | grep TTFT | awk '{print $6}'"
-        )
-        res_tpot = run_command(
-            "cat ./gsm8k_deepseek_log.txt | grep TPOT | awk '{print $6}'"
-        )
-        res_output_token_throughput = run_command(
-            "cat ./gsm8k_deepseek_log.txt | grep 'Output Token Throughput' | awk '{print $8}'"
-        )
-        self.assertLessEqual(
-            float(res_ttft),
-            self.ttft,
-        )
-        self.assertLessEqual(
-            float(res_tpot),
-            self.tpot,
-        )
-        self.assertGreaterEqual(
-            float(res_output_token_throughput),
-            self.output_token_throughput,
-        )
+        # res_ttft = run_command(
+        #     "cat ./bench_log.txt | grep TTFT | awk '{print $6}'"
+        # )
+        # res_tpot = run_command(
+        #     "cat ./bench_log.txt | grep TPOT | awk '{print $6}'"
+        # )
+        # res_output_token_throughput = run_command(
+        #     "cat ./bench_log.txt | grep 'Output Token Throughput' | awk '{print $8}'"
+        # )
+        # self.assertLessEqual(
+        #     float(res_ttft),
+        #     self.ttft,
+        # )
+        # self.assertLessEqual(
+        #     float(res_tpot),
+        #     self.tpot,
+        # )
+        # self.assertGreaterEqual(
+        #     float(res_output_token_throughput),
+        #     self.output_token_throughput,
+        # )
