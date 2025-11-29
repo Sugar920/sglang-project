@@ -33,6 +33,7 @@ MODEL_CONFIG = {
         "SGLANG_ENABLE_SPEC_V2": "1",
         "HCCL_BUFFSIZE": "600",
         "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "78",
+        "TASK_QUEUE_ENABLE": "0",
         "HCCL_SOCKET_IFNAME": "lo",
         "GLOO_SOCKET_IFNAME": "lo",     
     },
