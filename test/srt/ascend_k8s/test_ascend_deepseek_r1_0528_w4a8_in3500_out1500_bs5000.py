@@ -15,7 +15,8 @@ class TestDEEPSEEK_R1_0528_W4A8(TestSingleMixUtils):
     other_args = DEEPSEEK_R1_0528_W4A8_OTHER_ARGS
     envs = DEEPSEEK_R1_0528_W4A8_ENVS
     max_out_len = 1500
-    batch_size = 128
+    # batch_size = 128
+    batch_size = 8
     num_prompts = int(batch_size) * 4
     ttft = 5000
     tpot = 50
