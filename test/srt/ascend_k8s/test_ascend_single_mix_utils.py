@@ -196,6 +196,7 @@ QWEN3_CODER_480B_A35B_INSTRUCT_W8A8_QUAROT_OTHER_ARGS = (
         "458880",
         "--prefill-round-robin-balance",
         "--moe-a2a-backend",
+        "deepep",
         "--deepep-mode",
         "auto",
         "--disable-radix-cache",
