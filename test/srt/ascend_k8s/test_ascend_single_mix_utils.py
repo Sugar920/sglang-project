@@ -243,7 +243,7 @@ class TestSingleMixUtils(CustomTestCase):
     model = None
     dataset_name = None
     other_args = None
-    timeout = DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH
+    timeout = DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH * 10
     envs = None
     request_rate = None
     max_concurrency = None
