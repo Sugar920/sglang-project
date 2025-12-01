@@ -12,8 +12,8 @@ MODEL_ENVS = {
     "STREAMS_PER_DEVICE": "32",
     "HCCL_SOCKET_IFNAME": "lo",
     "GLOO_SOCKET_IFNAME": "lo",
-    "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "16",
-    "HCCL_BUFFSIZE": "850",
+    "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "32",
+    "HCCL_BUFFSIZE": "1600",
     "SGLANG_NPU_USE_MLAPO": "1",
     "SGLANG_USE_FIA_NZ": "1",
     "ENABLE_MOE_NZ": "1",
@@ -31,20 +31,23 @@ MODEL_OTHER_ARGS = (
         "w8a8_int8",
         "--watchdog-timeout",
         "9000",
-        "--mem-fraction-static",
-        "0.87",
-        "--max-running-requests",
-        "64",
         "--cuda-graph-bs",
         "8",
         "16",
+        # "24",
+        # "28",
+        # "32",
+        "--mem-fraction-static",
+        "0.68",
+        "--max-running-requests",
+        "128",
         "--context-length",
         "8188",
         "--disable-radix-cache",
         "--chunked-prefill-size",
-        "32768",
+        "-1",
         "--max-prefill-tokens",
-        "16000",
+        "6000",
         "--moe-a2a-backend",
         "deepep",
         "--deepep-mode",
@@ -61,7 +64,8 @@ MODEL_OTHER_ARGS = (
         "1",
         "--speculative-num-draft-tokens",
         "2",
-        "--disable-overlap-schedule",
+        "--dtype",
+        "bfloat16",
     ]
 )
 
@@ -72,7 +76,7 @@ class Test_Ascend_DeepSeek_R1_W4A8_In3500_Out3500(TestSingleMixUtils):
     envs = MODEL_ENVS
     dataset_name = "random"
     request_rate = 16
-    max_concurrency = 64
+    max_concurrency = 128
     num_prompts = int(max_concurrency) * 4
     input_len = 3500
     output_len = 1500
