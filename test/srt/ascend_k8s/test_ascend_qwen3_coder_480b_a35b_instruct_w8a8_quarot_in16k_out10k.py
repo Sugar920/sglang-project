@@ -14,7 +14,7 @@ class TestQwen3_Coder_480B_A35b_Instruct_W8a8_Quarot(TestSingleMixUtils):
     envs = QWEN3_CODER_480B_A35B_INSTRUCT_W8A8_QUAROT_ENVS
     dataset_name = "random"
     request_rate = 5.5
-    max_concurrency = 16
+    max_concurrency = 32
     input_len = 16000
     output_len = 10000
     random_range_ratio = 0.5
