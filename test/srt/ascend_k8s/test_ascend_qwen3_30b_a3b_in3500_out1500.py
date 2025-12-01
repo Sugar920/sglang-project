@@ -20,7 +20,7 @@ class TestQwen3_30B_A3B(TestSingleMixUtils):
     random_range_ratio = 0.5
     ttft = 4090.72
     tpot = 50.2
-    output_token_throughput = 1799.74*0.5
+    output_token_throughput = 1799.74 * 0.5
 
     def test_qwen3_30b_a3b(self):
         self.run_throughput()
