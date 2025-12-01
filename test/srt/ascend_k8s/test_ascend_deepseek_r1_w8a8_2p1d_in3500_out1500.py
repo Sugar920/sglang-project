@@ -34,8 +34,8 @@ MODEL_CONFIG = {
         "HCCL_BUFFSIZE": "600",
         "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "78",
         "TASK_QUEUE_ENABLE": "0",
-        "HCCL_SOCKET_IFNAME": "lo",
-        "GLOO_SOCKET_IFNAME": "lo",     
+        "HCCL_SOCKET_IFNAME": "enp23s0f3",
+        "GLOO_SOCKET_IFNAME": "enp23s0f3",    
     },
     "prefill_args": [
         "--disaggregation-mode",
