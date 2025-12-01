@@ -324,8 +324,8 @@ class TestAscendDisaggregationUtils(CustomTestCase):
             # _, host, port = self.base_url.split(":")
             # host = host[2:]
             metrics = run_bench_serving(
-                host=127.0.0.1,
-                port=6688,
+                host="127.0.0.1",
+                port="6688",
                 dataset_name=self.dataset_name,
                 request_rate=self.request_rate,
                 max_concurrency=self.max_concurrency,
