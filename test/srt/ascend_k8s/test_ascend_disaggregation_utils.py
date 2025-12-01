@@ -321,11 +321,11 @@ class TestAscendDisaggregationUtils(CustomTestCase):
             print(f"Wait 120s, starting run benchmark ......")
             time.sleep(120)
 
-            _, host, port = self.base_url.split(":")
-            host = host[2:]
+            # _, host, port = self.base_url.split(":")
+            # host = host[2:]
             metrics = run_bench_serving(
-                host=host,
-                port=port,
+                host=127.0.0.1,
+                port=6688,
                 dataset_name=self.dataset_name,
                 request_rate=self.request_rate,
                 max_concurrency=self.max_concurrency,
