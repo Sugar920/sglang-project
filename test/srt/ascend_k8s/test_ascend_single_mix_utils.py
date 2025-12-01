@@ -228,20 +228,22 @@ def run_command(cmd, shell=True):
         print(f"command error: {e}")
         return None
 
-def run_bench_serving(dataset_name="random", request_rate=8, max_concurrency=8, input_len=1024, output_len=1024,
+def run_bench_serving(host, port, dataset_name="random", request_rate=8, max_concurrency=8, input_len=1024, output_len=1024,
                       random_range_ratio=0.5):
     num_prompts = max_concurrency * 4
-    metrics = run_command(
-        f"python3 -m sglang.bench_serving --dataset-name {dataset_name} --request-rate {request_rate} "
-        f"--max-concurrency {max_concurrency} --num-prompts {num_prompts} --random-input-len {input_len} "
-        f"--random-output-len {output_len} --random-range-ratio {random_range_ratio} | tee ./bench_log.txt"
-    )
+    command = (f"python3 -m sglang.bench_serving --host {host} --port {port} --dataset-name {dataset_name} --request-rate {request_rate} "
+               f"--max-concurrency {max_concurrency} --num-prompts {num_prompts} --random-input-len {input_len} "
+               f"--random-output-len {output_len} --random-range-ratio {random_range_ratio}")
+    print(f"command:{command}")
+    metrics = run_command(f"{command} | tee ./bench_log.txt")
     return metrics
+
 
 class TestSingleMixUtils(CustomTestCase):
     model = None
     dataset_name = None
     other_args = None
+    timeout = DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH
     envs = None
     request_rate = None
     max_concurrency = None
@@ -261,7 +263,7 @@ class TestSingleMixUtils(CustomTestCase):
         cls.process = popen_launch_server(
             cls.model,
             cls.base_url,
-            timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
+            timeout=cls.timeout,
             other_args=cls.other_args,
             env=env,
         )
@@ -271,7 +273,11 @@ class TestSingleMixUtils(CustomTestCase):
         kill_process_tree(cls.process.pid)
 
     def run_throughput(self):
+        _, host, port = self.base_url.split(":")
+        host = host[2:]
         metrics = run_bench_serving(
+            host=host,
+            port=port,
             dataset_name=self.dataset_name,
             request_rate=self.request_rate,
             max_concurrency=self.max_concurrency,
@@ -279,17 +285,16 @@ class TestSingleMixUtils(CustomTestCase):
             output_len=self.output_len,
             random_range_ratio=self.random_range_ratio,
         )
-
         print("metrics is " + str(metrics))
-        # res_ttft = run_command(
-        #     "cat ./bench_log.txt | grep TTFT | awk '{print $6}'"
-        # )
-        # res_tpot = run_command(
-        #     "cat ./bench_log.txt | grep TPOT | awk '{print $6}'"
-        # )
-        # res_output_token_throughput = run_command(
-        #     "cat ./bench_log.txt | grep 'Output Token Throughput' | awk '{print $8}'"
-        # )
+        res_ttft = run_command(
+            "cat ./bench_log.txt | grep 'Mean TTFT' | awk '{print $4}'"
+        )
+        res_tpot = run_command(
+            "cat ./bench_log.txt | grep 'Mean TPOT' | awk '{print $4}'"
+        )
+        res_output_token_throughput = run_command(
+            "cat ./bench_log.txt | grep 'Output token throughput' | awk '{print $5}'"
+        )
         # self.assertLessEqual(
         #     float(res_ttft),
         #     self.ttft,
@@ -302,3 +307,15 @@ class TestSingleMixUtils(CustomTestCase):
         #     float(res_output_token_throughput),
         #     self.output_token_throughput,
         # )
+        self.assertGreater(
+            float(res_ttft),
+            0,
+        )
+        self.assertGreater(
+            float(res_tpot),
+            0,
+        )
+        self.assertGreater(
+            float(res_output_token_throughput),
+            0,
+        )
