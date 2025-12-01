@@ -12,11 +12,15 @@ class TestQwen3_30B_A3B(TestSingleMixUtils):
     model = QWEN3_30B_A3B_MODEL_PATH
     other_args = QWEN3_30B_A3B_OTHER_ARGS
     envs = QWEN3_30B_A3B_ENVS
-    max_out_len = 1500
-    batch_size = 48
-    num_prompts = int(batch_size) * 4
-    tpot = 100
-    output_token_throughput = 300
+    dataset_name = "random"
+    request_rate = 5.5
+    max_concurrency = 48
+    input_len = 3500
+    output_len = 1500
+    random_range_ratio = 0.5
+    ttft = 4090.72
+    tpot = 50.2
+    output_token_throughput = 1799.74*0.5
 
     def test_qwen3_30b_a3b(self):
         self.run_throughput()
