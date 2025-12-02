@@ -27,9 +27,10 @@ from sglang.test.test_utils import (
     run_bench_offline_throughput,
 )
 
-KUBE_CONFIG = "/data/.cache/kb.yaml"
-NAMESPACE = "kube-system"
-CONFIGMAP_NAME = "sglang-info"
+
+KUBE_CONFIG = os.environ.get('KUBECONFIG')
+NAMESPACE = os.environ.get('NAMESPACE')
+CONFIGMAP_NAME = os.environ.get('KUBE_CONFIG_MAP')
 LOACL_TIMEOUT = 6000
 
 config.load_kube_config(KUBE_CONFIG)
@@ -75,10 +76,10 @@ def discover_worker_nodes():
     config.load_incluster_config()
     v1 = client.CoreV1Api()
     prefill_pods = v1.list_namespaced_pod(
-        namespace="kube-system", label_selector="volcano.sh/task-spec=sglang-prefill"
+        namespace=NAMESPACE, label_selector="volcano.sh/task-spec=sglang-prefill"
     )
     docode_pods = v1.list_namespaced_pod(
-        namespace="kube-system", label_selector="volcano.sh/task-spec=sglang-decode"
+        namespace=NAMESPACE, label_selector="volcano.sh/task-spec=sglang-decode"
     )
     nodes_count = len(prefill_pods.items) + len(docode_pods.items)
     return nodes_count
@@ -229,7 +230,7 @@ def launch_node(config):
             if match:
                 idx = match.group(1)
                 hot_map_addr = f"/data/.cache/hot_map/aisbench_hot_map_p{idx}.pt"
-                prefill_args.extend(["--init-expert-location", hot_map_addr])
+                # prefill_args.extend(["--init-expert-location", hot_map_addr])
                 print(f"{pod_name} get hot map in {hot_map_addr}")
 
         for pa in prefill_args:
@@ -244,8 +245,8 @@ def launch_node(config):
             [
                 "--dist-init-addr",
                 dist_init_addr,
-                "--nnodes",
-                int(discover_worker_nodes() / 2),
+                # "--nnodes",
+                # int(discover_worker_nodes() / 2),
                 "--node-rank",
                 pod_index,
             ]
@@ -265,9 +266,9 @@ def launch_node(config):
     )
 
 
-def run_bench_serving(host, port, dataset_name="random", request_rate=8, max_concurrency=8, num_prompts=32, input_len=1024, output_len=1024,
-                      random_range_ratio=0.5):
-    command = (f"python3 -m sglang.bench_serving --backend sglang --host {host} --port {port} --dataset-name {dataset_name} --request-rate {request_rate} "
+def run_bench_serving(host, port, model_path, dataset_name="random", request_rate=8, max_concurrency=8, num_prompts=32, input_len=1024, output_len=1024,
+                      random_range_ratio=1):
+    command = (f"python3 -m sglang.bench_serving --backend sglang --model {model_path} --host {host} --port {port} --dataset-name {dataset_name} --request-rate {request_rate} "
                f"--max-concurrency {max_concurrency} --num-prompts {num_prompts} --random-input-len {input_len} "
                f"--random-output-len {output_len} --random-range-ratio {random_range_ratio}")
     print(f"command:{command}")
@@ -277,13 +278,14 @@ def run_bench_serving(host, port, dataset_name="random", request_rate=8, max_con
 
 class TestAscendDisaggregationUtils(CustomTestCase):
     model_config = None
+    model_path = None
     dataset_name = None
     request_rate = None
     max_concurrency = 8
     num_prompts = int(max_concurrency) * 4
     input_len = None
     output_len = None
-    random_range_ratio = 0.5
+    random_range_ratio = 1
     ttft = None
     tpot = None
     output_token_throughput = None
@@ -320,11 +322,10 @@ class TestAscendDisaggregationUtils(CustomTestCase):
             print(f"Wait 120s, starting run benchmark ......")
             time.sleep(120)
 
-            # _, host, port = self.base_url.split(":")
-            # host = host[2:]
             metrics = run_bench_serving(
                 host="127.0.0.1",
                 port="6688",
+                model_path = self.model_path,
                 dataset_name=self.dataset_name,
                 request_rate=self.request_rate,
                 max_concurrency=self.max_concurrency,
