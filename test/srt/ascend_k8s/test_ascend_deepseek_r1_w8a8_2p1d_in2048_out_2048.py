@@ -38,6 +38,10 @@ MODEL_CONFIG = {
         "GLOO_SOCKET_IFNAME": "enp23s0f3",     
     },
     "prefill_args": [
+        "--nnodes",
+        "1",
+        "--node-rank",
+        "0",
         "--disaggregation-mode",
         "prefill",
         "--tp-size",
@@ -75,6 +79,8 @@ MODEL_CONFIG = {
         "bfloat16",
     ],
     "decode_args": [
+        "--nnodes",
+        "2",
         "--disaggregation-mode",
         "decode",
         "--tp-size",
