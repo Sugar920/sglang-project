@@ -39,6 +39,10 @@ MODEL_CONFIG = {
         "GLOO_SOCKET_IFNAME": "lo",     
     },
     "prefill_args": [
+        "--nnodes",
+        "1",
+        "--node-rank",
+        "0",
         "--disaggregation-mode",
         "prefill",
         "--tp-size",
@@ -76,6 +80,10 @@ MODEL_CONFIG = {
         "bfloat16",
     ],
     "decode_args": [
+        "--nnodes",
+        "1",
+        "--node-rank",
+        "0",
         "--disaggregation-mode",
         "decode",
         "--tp-size",
