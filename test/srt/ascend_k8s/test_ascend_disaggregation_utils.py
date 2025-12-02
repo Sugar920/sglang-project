@@ -265,9 +265,8 @@ def launch_node(config):
     )
 
 
-def run_bench_serving(host, port, dataset_name="random", request_rate=8, max_concurrency=8, input_len=1024, output_len=1024,
+def run_bench_serving(host, port, dataset_name="random", request_rate=8, max_concurrency=8, num_prompts=32, input_len=1024, output_len=1024,
                       random_range_ratio=0.5):
-    num_prompts = max_concurrency * 4
     command = (f"python3 -m sglang.bench_serving --host {host} --port {port} --dataset-name {dataset_name} --request-rate {request_rate} "
                f"--max-concurrency {max_concurrency} --num-prompts {num_prompts} --random-input-len {input_len} "
                f"--random-output-len {output_len} --random-range-ratio {random_range_ratio}")
