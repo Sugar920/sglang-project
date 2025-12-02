@@ -57,7 +57,7 @@ MODEL_CONFIG = {
         8192,
         "--disable-radix-cache",
         "--chunked-prefill-size",
-        32768,
+        -1,
         "--max-prefill-tokens",
         28680,
         "--moe-a2a-backend",
