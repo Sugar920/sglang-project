@@ -278,7 +278,6 @@ def run_bench_serving(host, port, model_path, dataset_name="random", request_rat
 
 class TestAscendDisaggregationUtils(CustomTestCase):
     model_config = None
-    model_path = None
     dataset_name = None
     request_rate = None
     max_concurrency = 8
@@ -325,7 +324,7 @@ class TestAscendDisaggregationUtils(CustomTestCase):
             metrics = run_bench_serving(
                 host="127.0.0.1",
                 port="6688",
-                model_path = self.model_path,
+                model_path = self.model_config.get("model_path"),
                 dataset_name=self.dataset_name,
                 request_rate=self.request_rate,
                 max_concurrency=self.max_concurrency,
