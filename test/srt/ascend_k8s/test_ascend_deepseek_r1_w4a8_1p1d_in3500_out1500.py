@@ -48,7 +48,7 @@ MODEL_CONFIG = {
         "--tp-size",
         16,
         "--mem-fraction-static",
-        0.6,
+        0.8,
         "--quantization",
         "w8a8_int8",
         "--max-running-requests",
@@ -82,8 +82,6 @@ MODEL_CONFIG = {
     "decode_args": [
         "--nnodes",
         "1",
-        "--node-rank",
-        "0",
         "--disaggregation-mode",
         "decode",
         "--tp-size",
