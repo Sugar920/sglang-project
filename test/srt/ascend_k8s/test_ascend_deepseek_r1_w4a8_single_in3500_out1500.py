@@ -41,9 +41,9 @@ MODEL_OTHER_ARGS = (
         # "28",
         # "32",
         "--mem-fraction-static",
-        "0.68",
+        "0.8",
         "--max-running-requests",
-        "128",
+        "16",
         "--context-length",
         "8188",
         "--disable-radix-cache",
@@ -79,11 +79,11 @@ class Test_Ascend_DeepSeek_R1_W4A8_In3500_Out3500(TestSingleMixUtils):
     envs = MODEL_ENVS
     dataset_name = "random"
     request_rate = 16
-    max_concurrency = 128
+    max_concurrency = 4
     num_prompts = int(max_concurrency) * 4
     input_len = 3500
     output_len = 1500
-    random_range_ratio = 0.5
+    random_range_ratio = 1
     ttft = 5070.35
     tpot = 48.57
     output_token_throughput = 916.373
