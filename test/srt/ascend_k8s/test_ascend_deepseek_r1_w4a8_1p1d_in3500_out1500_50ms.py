@@ -139,7 +139,7 @@ class Test_DeepSeek_R1_W4A8_1P1D_In3500_Out1500(TestAscendDisaggregationUtils):
     num_prompts = int(max_concurrency) * 4
     input_len = 3500
     output_len = 1500
-    random_range_ratio = 0.5
+    random_range_ratio = 1
     ttft = 6570.00
     tpot = 50.41
     output_token_throughput = 2144.656
