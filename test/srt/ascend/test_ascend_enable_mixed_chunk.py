@@ -40,9 +40,8 @@ class TestAscendEnableMixedChunk(CustomTestCase):
             4,
             "--enable-mixed-chunk",
             "--max-running-requests",
-            "4",
+            4,
             "--disable-radix-cache",
-            "True",
         ]
 
         # cls.extra_envs = {
