@@ -154,15 +154,9 @@ TEST_MODEL_MATRIX = {
 
 
 class TestAscendEnableMixedChunk(TestAscendDisaggregationUtils):
-
-    @classmethod
-    def setUpClass(cls):
-
     def test_a_gsm8k(self):
         with self.subTest(model=MODEL_PATH):
             print(f"##=== Testing accuracy: {model} ===##")
-
-
             try:
                 args = SimpleNamespace(
                     num_shots=20,
