@@ -41,15 +41,18 @@ class TestAscendEnableMixedChunk(CustomTestCase):
             "--enable-mixed-chunk",
             "--max-running-requests",
             4,
+            "--cuda-graph-bs",
+            1 2 3 4,
             "--disable-radix-cache",
         ]
 
-        # cls.extra_envs = {
-        #     "SGLANG_NPU_USE_MLAPO": "1",
-        #     "SGLANG_ENABLE_SPEC_V2": "1",
-        #     "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": "1",
-        # }
-        # os.environ.update(cls.extra_envs)
+        cls.extra_envs = {
+            "SGLANG_SET_CPU_AFFINITY": "1",
+            "STREAMS_PER_DEVICE": "32",
+            "HCCL_BUFFSIZE": "1536",
+            "HCCL_OP_EXPANSION_MODE": "AIV",
+        }
+        os.environ.update(cls.extra_envs)
 
     def test_a_gsm8k(self):
         for model in self.models:
