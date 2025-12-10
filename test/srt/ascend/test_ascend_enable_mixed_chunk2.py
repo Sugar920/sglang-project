@@ -125,6 +125,9 @@ class TestAscendEnableMixedChunk(CustomTestCase):
                 finally:
                     kill_process_tree(process.pid)
 
+                accuracy_with_mixed_chunk = metrics_with_mixed_chunk["accuracy"]
+                accuracy_without_mixed_chunk = metrics_without_mixed_chunk["accuracy"]
+
 
 if __name__ == "__main__":
     unittest.main()
