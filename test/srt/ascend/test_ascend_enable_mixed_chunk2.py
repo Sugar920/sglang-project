@@ -27,7 +27,7 @@ class TestAscendEnableMixedChunk(CustomTestCase):
         cls.base_url = DEFAULT_URL_FOR_TEST
         cls.url = urlparse(DEFAULT_URL_FOR_TEST)
 
-        cls.common_args = [
+        cls.common_args_with_mixed_chunk = [
             "--trust-remote-code",
             "--attention-backend",
             "ascend",
@@ -39,6 +39,24 @@ class TestAscendEnableMixedChunk(CustomTestCase):
             "--tp-size",
             "4",
             "--enable-mixed-chunk",
+            "--max-running-requests",
+            4,
+            "--cuda-graph-bs",
+            1 2 3 4,
+            "--disable-radix-cache",
+        ]
+
+        cls.common_args_without_mixed_chunk = [
+            "--trust-remote-code",
+            "--attention-backend",
+            "ascend",
+            "--mem-fraction-static",
+            "0.8",
+            "--disable-radix-cache",
+            "--chunked-prefill-size",
+            "-1",
+            "--tp-size",
+            "4",
             "--max-running-requests",
             4,
             "--cuda-graph-bs",
@@ -59,12 +77,12 @@ class TestAscendEnableMixedChunk(CustomTestCase):
             with self.subTest(model=model):
                 print(f"##=== Testing accuracy: {model} ===##")
 
-                process = popen_launch_server(
+                process_with_mixed_chunk = popen_launch_server(
                     model,
                     self.base_url,
                     timeout=1500,
                     other_args=[
-                        *self.common_args,
+                        *self.common_args_with_mixed_chunk,
                     ],
                 )
 
@@ -79,11 +97,31 @@ class TestAscendEnableMixedChunk(CustomTestCase):
                         port=int(self.url.port),
                     )
 
-                    metrics = run_eval_few_shot_gsm8k(args)
-    #                self.assertGreaterEqual(
-     #                   metrics["accuracy"],
-      #                  TEST_MODEL_MATRIX[model]["accuracy"],
-       #             )
+                    metrics_with_mixed_chunk = run_eval_few_shot_gsm8k(args)
+                finally:
+                    kill_process_tree(process.pid)
+
+                process_without_mixed_chunk = popen_launch_server(
+                    model,
+                    self.base_url,
+                    timeout=1500,
+                    other_args=[
+                        *self.common_args_without_mixed_chunk,
+                    ],
+                )
+
+                try:
+                    args = SimpleNamespace(
+                        num_shots=5,
+                        data_path=None,
+                        num_questions=1319,
+                        max_new_tokens=512,
+                        parallel=256,
+                        host=f"http://{self.url.hostname}",
+                        port=int(self.url.port),
+                    )
+
+                    metrics_without_mixed_chunk = run_eval_few_shot_gsm8k(args)
                 finally:
                     kill_process_tree(process.pid)
 
