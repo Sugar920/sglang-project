@@ -44,7 +44,10 @@ class TestAscendEnableMixedChunk(CustomTestCase):
             "--max-running-requests",
             4,
             "--cuda-graph-bs",
-            1 2 3 4,
+            1,
+            2,
+            3,
+            4,
             "--disable-radix-cache",
         ]
 
