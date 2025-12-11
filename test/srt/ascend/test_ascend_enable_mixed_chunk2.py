@@ -130,6 +130,8 @@ class TestAscendEnableMixedChunk(CustomTestCase):
                     )
 
                     self.metrics_without_mixed_chunk = run_eval_few_shot_gsm8k(args)
+                    print("metrics_with_mixed_chunk: ", self.metrics_with_mixed_chunk)
+                    print("metrics_without_mixed_chunk: ", self.metrics_without_mixed_chunk)
                     accuracy_with_mixed_chunk = self.metrics_with_mixed_chunk["accuracy"]
                     accuracy_without_mixed_chunk = self.metrics_without_mixed_chunk["accuracy"]
                     if accuracy_with_mixed_chunk < accuracy_without_mixed_chunk:
