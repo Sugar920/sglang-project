@@ -261,6 +261,9 @@ TEST_MODEL_MATRIX = {
 
 
 class TestAscendEnableSpAndCp(TestAscendDisaggregationUtils):
+    accuracy_close = None
+    accuracy_open = None
+    
     def run_gsm8k(self, model_config):
         with self.subTest(model=model_config.get("model_path")):
             print(f"##=== Testing accuracy: {model} ===##")
@@ -277,10 +280,10 @@ class TestAscendEnableSpAndCp(TestAscendDisaggregationUtils):
             return metrics["accuracy"]
     
     def test_close(self):
-        accuracy_close = self.run_gsm8k(MODEL_CONFIG_CLOSE)
+        self.accuracy_close = self.run_gsm8k(MODEL_CONFIG_CLOSE)
 
     def test_open(self):
-        accuracy_open = self.run_gsm8k(MODEL_CONFIG_OPEN)
+        self.accuracy_open = self.run_gsm8k(MODEL_CONFIG_OPEN)
         if accuracy_open < accuracy_close:
             accuracy_diff = (accuracy_close - accuracy_open) / accuracy_close
         self.assertLessEqual(accuracy_diff, 0.01)
