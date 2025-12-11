@@ -107,7 +107,7 @@ class TestAscendEnableMixedChunk(CustomTestCase):
 
                     self.metrics_with_mixed_chunk = run_eval_few_shot_gsm8k(args)
                 finally:
-                    kill_process_tree(process.pid)
+                    kill_process_tree(process_with_mixed_chunk.pid)
 
                 process_without_mixed_chunk = popen_launch_server(
                     model,
@@ -139,7 +139,7 @@ class TestAscendEnableMixedChunk(CustomTestCase):
                            0.01,
                        )
                 finally:
-                    kill_process_tree(process.pid)
+                    kill_process_tree(process_without_mixed_chunk.pid)
 
 
 if __name__ == "__main__":
