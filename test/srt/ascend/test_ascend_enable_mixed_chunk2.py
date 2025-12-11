@@ -20,8 +20,8 @@ TEST_MODEL_MATRIX = {
 
 
 class TestAscendEnableMixedChunk(CustomTestCase):
-    accuracy_with_mixed_chunk = None
-    accuracy_without_mixed_chunk = None
+    self.metrics_with_mixed_chunk = None
+    self.metrics_without_mixed_chunk = None
 
     @classmethod
     def setUpClass(cls):
@@ -130,16 +130,14 @@ class TestAscendEnableMixedChunk(CustomTestCase):
                     )
 
                     self.metrics_without_mixed_chunk = run_eval_few_shot_gsm8k(args)
-                
-
-                self.accuracy_with_mixed_chunk = metrics_with_mixed_chunk["accuracy"]
-                self.accuracy_without_mixed_chunk = metrics_without_mixed_chunk["accuracy"]
-                if self.accuracy_with_mixed_chunk < self.accuracy_without_mixed_chunk:
-                    accuracy_diff = (self.accuracy_without_mixed_chunk - self.accuracy_with_mixed_chunk) / self.accuracy_without_mixed_chunk
-                    self.assertLessEqual(
-                       accuracy_diff,
-                       0.01,
-                   )
+                    accuracy_with_mixed_chunk = self.metrics_with_mixed_chunk["accuracy"]
+                    accuracy_without_mixed_chunk = self.metrics_without_mixed_chunk["accuracy"]
+                    if accuracy_with_mixed_chunk < accuracy_without_mixed_chunk:
+                        accuracy_diff = (accuracy_without_mixed_chunk - accuracy_with_mixed_chunk) / accuracy_without_mixed_chunk
+                        self.assertLessEqual(
+                           accuracy_diff,
+                           0.01,
+                       )
                 finally:
                     kill_process_tree(process.pid)
 
