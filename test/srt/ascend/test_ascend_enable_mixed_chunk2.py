@@ -20,8 +20,8 @@ TEST_MODEL_MATRIX = {
 
 
 class TestAscendEnableMixedChunk(CustomTestCase):
-    self.metrics_with_mixed_chunk = None
-    self.metrics_without_mixed_chunk = None
+    metrics_with_mixed_chunk = None
+    metrics_without_mixed_chunk = None
 
     @classmethod
     def setUpClass(cls):
