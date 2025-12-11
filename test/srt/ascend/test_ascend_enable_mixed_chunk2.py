@@ -128,7 +128,7 @@ class TestAscendEnableMixedChunk(CustomTestCase):
 
                 self.accuracy_with_mixed_chunk = metrics_with_mixed_chunk["accuracy"]
                 self.accuracy_without_mixed_chunk = metrics_without_mixed_chunk["accuracy"]
-                if self.accuracy_with_mixed_chunk < self.accuracy_without_mixed_chunk"
+                if self.accuracy_with_mixed_chunk < self.accuracy_without_mixed_chunk:
                     accuracy_diff = (self.accuracy_without_mixed_chunk - self.accuracy_with_mixed_chunk) / self.accuracy_without_mixed_chunk
                     self.assertLessEqual(
                        accuracy_diff,
