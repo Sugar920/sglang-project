@@ -24,7 +24,7 @@ TEST_MODEL_MATRIX = {
 }
 
 
-class TestAscendDeepEP(CustomTestCase):
+class TestAscendEagle3(CustomTestCase):
 
     @classmethod
     def setUpClass(cls):
