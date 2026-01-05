@@ -52,7 +52,7 @@ class TestAscendApi(CustomTestCase):
         self.assertEqual(response.json()['model_path'], self.model)
         self.assertEqual(response.json()['tokenizer_path'], self.model)
         self.assertTrue(response.json()['is_generation'])
-        self.assertNone(response.json()['preferred_sampling_params'])
+        self.assertIsNone(response.json()['preferred_sampling_params'])
         self.assertEqual(response.json()['weight_version'], "default")
         self.assertFalse(response.json()['has_image_understanding'])
         self.assertFalse(response.json()['has_audio_understanding'])
@@ -71,6 +71,18 @@ class TestAscendApi(CustomTestCase):
         print(response.json())
 
     def test_api_get_load(self):
+        response = requests.post(
+            f"{DEFAULT_URL_FOR_TEST}/generate",
+            json={
+                "text": "The capital of France is",
+                "sampling_params": {
+                    "temperature": 0,
+                    "max_new_tokens": 32,
+                },
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Paris", response.text)
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/get_load")
         self.assertEqual(response.status_code, 200)
         print(response.json())
@@ -79,9 +91,14 @@ class TestAscendApi(CustomTestCase):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models")
         self.assertEqual(response.status_code, 200)
         print(response.json())
+        self.assertEqual(response.json()['data'][0]['id'], self.model)
+        self.assertEqual(response.json()['data'][0]['object'], "model")
+        self.assertEqual(response.json()['data'][0]['owned_by'], "sglang")
+        self.assertEqual(response.json()['data'][0]['root'], self.model)
+        self.assertEqual(response.json()['data'][0]['max_model_len'], 131072)
 
     def test_api_v1_models_path(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models/{model:cls.model}")
+        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models/{self.model}")
         self.assertEqual(response.status_code, 200)
         print(response.json())
         
