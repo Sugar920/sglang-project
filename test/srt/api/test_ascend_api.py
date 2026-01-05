@@ -47,8 +47,8 @@ class TestAscendApi(CustomTestCase):
 
     def test_api_model_info(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/model_info")
-        print(f"[test_api_model_info] response.text: {response.text}")
-        print(f"[test_api_model_info] response.json(): {response.json()}")
+        print(f"[test_api_model_info] response.text: {response.text} {response.text["model_path"]}")
+        print(f"[test_api_model_info] response.json(): {response.json()}  {response.json()['model_path']}")
         # model_path = response.json()["model_path"]
         # self.assertEqual(response.status_code, 200)
         # self.assertEqual(model_path, self.model)
