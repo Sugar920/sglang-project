@@ -47,31 +47,37 @@ class TestAscendApi(CustomTestCase):
 
     def test_api_model_info(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/model_info")
-        print(f"[test_api_model_info] response.json(): {response.json()}")
-        print(response.json()['model_path'])
-        # model_path = response.json()["model_path"]
-        # self.assertEqual(response.status_code, 200)
-        # self.assertEqual(model_path, self.model)
+        print(response.json())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['model_path'], self.model)
+        self.assertEqual(response.json()['tokenizer_path'], self.model)
+        self.assertTrue(response.json()['is_generation'])
+        self.assertNone(response.json()['preferred_sampling_params'])
+        self.assertEqual(response.json()['weight_version'], "default")
+        self.assertFalse(response.json()['has_image_understanding'])
+        self.assertFalse(response.json()['has_audio_understanding'])
+        self.assertEqual(response.json()['model_type'], "llama")
+        self.assertEqual(response.json()['architectures'][0], "LlamaForCausalLM")
 
     def test_api_weight_version(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/weight_version")
-        print(f"[test_api_model_info] response: {response}")
+        self.assertEqual(response.status_code, 200)
 
     def test_api_server_info(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/server_info")
-        print(f"[test_api_model_info] response: {response}")
+        self.assertEqual(response.status_code, 200)
 
     def test_api_get_load(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/get_load")
-        print(f"[test_api_model_info] response: {response}")
+        self.assertEqual(response.status_code, 200)
 
     def test_api_v1_models(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models")
-        print(f"[test_api_model_info] response: {response}")
+        self.assertEqual(response.status_code, 200)
 
     def test_api_v1_models_path(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models{model:path}")
-        print(f"[test_api_model_info] response: {response}")
+        self.assertEqual(response.status_code, 200)
         
         # response = requests.post(
         #     f"{DEFAULT_URL_FOR_TEST}/generate",
