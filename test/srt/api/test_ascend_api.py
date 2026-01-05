@@ -47,8 +47,8 @@ class TestAscendApi(CustomTestCase):
 
     def test_api_model_info(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/model_info")
-        print(response.json())
         self.assertEqual(response.status_code, 200)
+        print(response.json())
         self.assertEqual(response.json()['model_path'], self.model)
         self.assertEqual(response.json()['tokenizer_path'], self.model)
         self.assertTrue(response.json()['is_generation'])
@@ -62,22 +62,28 @@ class TestAscendApi(CustomTestCase):
     def test_api_weight_version(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/weight_version")
         self.assertEqual(response.status_code, 200)
+        print(response.json())
+        self.assertEqual(response.json()['weight_version'], "default")
 
     def test_api_server_info(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/server_info")
         self.assertEqual(response.status_code, 200)
+        print(response.json())
 
     def test_api_get_load(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/get_load")
         self.assertEqual(response.status_code, 200)
+        print(response.json())
 
     def test_api_v1_models(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models")
         self.assertEqual(response.status_code, 200)
+        print(response.json())
 
     def test_api_v1_models_path(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models{model:path}")
+        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models/{model:cls.model}")
         self.assertEqual(response.status_code, 200)
+        print(response.json())
         
         # response = requests.post(
         #     f"{DEFAULT_URL_FOR_TEST}/generate",
