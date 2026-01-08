@@ -76,12 +76,12 @@ class TestAscendApi(CustomTestCase):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/get_load")
         self.assertEqual(response.status_code, 200)
         print(response.json())
-        self.assertIsNone(response.json()['rid'])
-        self.assertIsNone(response.json()['http_worker_ipc'])
-        self.assertIsNone(response.json()['dp_rank'])
-        self.assertGreaterEqual(response.json()['num_reqs'], 0)
-        self.assertGreaterEqual(response.json()['num_waiting_reqs'], 0)
-        self.assertGreaterEqual(response.json()['num_tokens'], 0)
+        self.assertIsNone(response.json()[0]['rid'])
+        self.assertIsNone(response.json()[0]['http_worker_ipc'])
+        self.assertIsNone(response.json()[0]['dp_rank'])
+        self.assertGreaterEqual(response.json()[0]['num_reqs'], 0)
+        self.assertGreaterEqual(response.json()[0]['num_waiting_reqs'], 0)
+        self.assertGreaterEqual(response.json()[0]['num_tokens'], 0)
 
     def test_api_v1_models(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models")
