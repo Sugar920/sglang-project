@@ -69,23 +69,19 @@ class TestAscendApi(CustomTestCase):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/server_info")
         self.assertEqual(response.status_code, 200)
         print(response.json())
+        self.assertEqual(response.json()['model_path'], self.model)
+        self.assertEqual(response.json()['tokenizer_path'], self.model)
 
     def test_api_get_load(self):
-        response = requests.post(
-            f"{DEFAULT_URL_FOR_TEST}/generate",
-            json={
-                "text": "The capital of France is",
-                "sampling_params": {
-                    "temperature": 0,
-                    "max_new_tokens": 1024,
-                },
-            },
-        )
-        # self.assertEqual(response.status_code, 200)
-        # self.assertIn("Paris", response.text)
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/get_load")
-        # self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         print(response.json())
+        self.assertIsNone(response.json()['rid'])
+        self.assertIsNone(response.json()['http_worker_ipc'])
+        self.assertIsNone(response.json()['dp_rank'])
+        self.assertGreaterEqual(response.json()['num_reqs'], 0)
+        self.assertGreaterEqual(response.json()['num_waiting_reqs'], 0)
+        self.assertGreaterEqual(response.json()['num_tokens'], 0)
 
     def test_api_v1_models(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models")
@@ -106,23 +102,6 @@ class TestAscendApi(CustomTestCase):
         self.assertEqual(response.json()['owned_by'], "sglang")
         self.assertEqual(response.json()['root'], self.model)
         self.assertEqual(response.json()['max_model_len'], 131072)
-        
-        # response = requests.post(
-        #     f"{DEFAULT_URL_FOR_TEST}/generate",
-        #     json={
-        #         "text": "The capital of France is",
-        #         "sampling_params": {
-        #             "temperature": 0,
-        #             "max_new_tokens": 32,
-        #         },
-        #     },
-        # )
-        # self.assertEqual(response.status_code, 200)
-        # self.assertIn("Paris", response.text)
-        # response = requests.get(DEFAULT_URL_FOR_TEST + "/get_server_info")
-        # self.assertEqual(response.status_code, 200)
-        # self.assertEqual(response.json()["enable_mixed_chunk"], True)
-        # kill_process_tree(process.pid)
 
 
 if __name__ == "__main__":
