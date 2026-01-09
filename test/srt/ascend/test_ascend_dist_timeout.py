@@ -64,7 +64,7 @@ class TestAscendDistTimeout(CustomTestCase):
     def test_short_dist_timeout(self):
         for model in self.models:
             with self.subTest(model=model):
-                other_args =  self.common_args + ["--dist-tomeout", 50,]
+                other_args =  self.common_args + ["--dist-timeout", 50,]
                 process = popen_launch_server(
                     model,
                     self.base_url,
@@ -84,7 +84,7 @@ class TestAscendDistTimeout(CustomTestCase):
         for model in self.models:
             with self.subTest(model=model):
                 print(f"##=== Testing accuracy: {model} ===##")
-                other_args =  self.common_args + ["--dist-tomeout", 3600,]
+                other_args =  self.common_args + ["--dist-timeout", 3600,]
                 process = popen_launch_server(
                     model,
                     self.base_url,
