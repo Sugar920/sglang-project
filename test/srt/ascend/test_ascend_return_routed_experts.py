@@ -47,6 +47,8 @@ class TestReturnRoutedExperts(CustomTestCase):
             "--dp",
             4,
             "--enable-dp-attention",
+            "--attention-backend",
+            "ascend",
         ]
         cls.reference_args = [
             "--enable-return-routed-experts",
@@ -56,6 +58,8 @@ class TestReturnRoutedExperts(CustomTestCase):
             "--dp",
             4,
             "--enable-dp-attention",
+            "--attention-backend",
+            "ascend",
         ]
         cls.sampling_args = {
             "temperature": 0,
