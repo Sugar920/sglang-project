@@ -68,6 +68,7 @@ class TestAscendDistTimeout(CustomTestCase):
                 process = popen_launch_server(
                     model,
                     self.base_url,
+                    timeout=1500,
                     other_args=[
                         *other_args,
                     ],
