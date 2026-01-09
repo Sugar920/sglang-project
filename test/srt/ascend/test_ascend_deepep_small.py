@@ -1,4 +1,5 @@
 import unittest
+import os
 from types import SimpleNamespace
 
 import requests
