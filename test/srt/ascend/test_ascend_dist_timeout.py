@@ -64,7 +64,7 @@ class TestAscendDistTimeout(CustomTestCase):
     def test_short_dist_timeout(self):
         for model in self.models:
             with self.subTest(model=model):
-                other_args =  self.common_args + ["--dist-timeout", 50,]
+                other_args =  self.common_args + ["--dist-timeout", 10,]
                 process = popen_launch_server(
                     model,
                     self.base_url,
