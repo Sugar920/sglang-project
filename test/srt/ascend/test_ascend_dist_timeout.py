@@ -77,8 +77,7 @@ class TestAscendDistTimeout(CustomTestCase):
                 #     metrics["accuracy"],
                 #     TEST_MODEL_MATRIX[model]["accuracy"],
                 # )
-                finally:
-                    kill_process_tree(process.pid)
+                # kill_process_tree(process.pid)
 
     
     def test_a_gsm8k(self):
