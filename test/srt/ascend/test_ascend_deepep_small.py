@@ -215,7 +215,7 @@ class TestTBO(CustomTestCase):
         cls.process = popen_launch_server(
             cls.model,
             cls.base_url,
-            timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
+            timeout=60000,
             other_args=[
                 "--trust-remote-code",
                 "--tp",
@@ -227,9 +227,9 @@ class TestTBO(CustomTestCase):
                 "1",
                 "--moe-a2a-backend",
                 "deepep",
-                "--enable-two-batch-overlap",
-                "--cuda-graph-max-bs",
-                "128",
+                # "--enable-two-batch-overlap",
+                # "--cuda-graph-max-bs",
+                # "128",
                 "--max-running-requests",
                 "512",
                 "--attention-backend",
@@ -238,6 +238,7 @@ class TestTBO(CustomTestCase):
                 # 0.7,
                 "--quantization",
                 "modelslim",
+                "--disable-cuda-graph",
             ],
             env={
                     "HCCL_BUFFSIZE": "1000",
