@@ -18,7 +18,7 @@ from sglang.test.test_utils import (
 class TestPureDP(CustomTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.model = DEFAULT_MODEL_NAME_FOR_TEST_MLA
+        cls.model = "/root/.cache/modelscope/hub/models/vllm-ascend/DeepSeek-R1-0528-W8A8"
         cls.base_url = DEFAULT_URL_FOR_TEST
         cls.process = popen_launch_server(
             cls.model,
@@ -27,7 +27,7 @@ class TestPureDP(CustomTestCase):
             other_args=[
                 "--trust-remote-code",
                 "--tp",
-                "4",
+                "16",
                 "--enable-dp-attention",
                 "--dp",
                 "4",
@@ -67,7 +67,7 @@ class TestPureDP(CustomTestCase):
 class TestHybridDPTP(CustomTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.model = DEFAULT_MODEL_NAME_FOR_TEST_MLA
+        cls.model = "/root/.cache/modelscope/hub/models/vllm-ascend/DeepSeek-R1-0528-W8A8"
         cls.base_url = DEFAULT_URL_FOR_TEST
         cls.process = popen_launch_server(
             cls.model,
@@ -76,7 +76,7 @@ class TestHybridDPTP(CustomTestCase):
             other_args=[
                 "--trust-remote-code",
                 "--tp",
-                "4",
+                "16",
                 "--enable-dp-attention",
                 "--dp",
                 "2",
@@ -114,7 +114,7 @@ class TestHybridDPTP(CustomTestCase):
 class TestTP(CustomTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.model = DEFAULT_MODEL_NAME_FOR_TEST_MLA
+        cls.model = "/root/.cache/modelscope/hub/models/vllm-ascend/DeepSeek-R1-0528-W8A8"
         cls.base_url = DEFAULT_URL_FOR_TEST
         cls.process = popen_launch_server(
             cls.model,
@@ -123,7 +123,7 @@ class TestTP(CustomTestCase):
             other_args=[
                 "--trust-remote-code",
                 "--tp",
-                "4",
+                "16",
                 "--moe-a2a-backend",
                 "deepep",
                 "--cuda-graph-max-bs",
@@ -159,7 +159,7 @@ class TestTP(CustomTestCase):
 class TestNoGatherdBuffer(CustomTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.model = DEFAULT_MODEL_NAME_FOR_TEST_MLA
+        cls.model = "/root/.cache/modelscope/hub/models/vllm-ascend/DeepSeek-R1-0528-W8A8"
         cls.base_url = DEFAULT_URL_FOR_TEST
         cls.process = popen_launch_server(
             cls.model,
@@ -168,7 +168,7 @@ class TestNoGatherdBuffer(CustomTestCase):
             other_args=[
                 "--trust-remote-code",
                 "--tp",
-                "4",
+                "16",
                 "--enable-dp-attention",
                 "--dp",
                 "4",
@@ -209,7 +209,7 @@ class TestNoGatherdBuffer(CustomTestCase):
 class TestTBO(CustomTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.model = DEFAULT_MODEL_NAME_FOR_TEST_MLA
+        cls.model = "/root/.cache/modelscope/hub/models/vllm-ascend/DeepSeek-R1-0528-W8A8"
         cls.base_url = DEFAULT_URL_FOR_TEST
         cls.process = popen_launch_server(
             cls.model,
@@ -218,7 +218,7 @@ class TestTBO(CustomTestCase):
             other_args=[
                 "--trust-remote-code",
                 "--tp",
-                "4",
+                "16",
                 "--enable-dp-attention",
                 "--dp",
                 "4",
@@ -260,7 +260,7 @@ class TestTBO(CustomTestCase):
 class TestMTP(CustomTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.model = DEFAULT_MODEL_NAME_FOR_TEST_MLA
+        cls.model = "/root/.cache/modelscope/hub/models/vllm-ascend/DeepSeek-R1-0528-W8A8"
         cls.base_url = DEFAULT_URL_FOR_TEST
         cls.process = popen_launch_server(
             cls.model,
@@ -269,7 +269,7 @@ class TestMTP(CustomTestCase):
             other_args=[
                 "--trust-remote-code",
                 "--tp",
-                "4",
+                "16",
                 "--enable-dp-attention",
                 "--dp",
                 "2",
@@ -278,8 +278,8 @@ class TestMTP(CustomTestCase):
                 "deepep",
                 "--speculative-algo",
                 "EAGLE",
-                "--speculative-draft-model-path",
-                DEFAULT_MODEL_NAME_FOR_TEST_MLA_NEXTN,
+                # "--speculative-draft-model-path",
+                # DEFAULT_MODEL_NAME_FOR_TEST_MLA_NEXTN,
                 "--speculative-num-steps",
                 "2",
                 "--speculative-eagle-topk",
@@ -330,7 +330,7 @@ class TestMTPWithTBO(CustomTestCase):
     @classmethod
     def setUpClass(cls):
 
-        cls.model = DEFAULT_MODEL_NAME_FOR_TEST_MLA
+        cls.model = "/root/.cache/modelscope/hub/models/vllm-ascend/DeepSeek-R1-0528-W8A8"
         cls.base_url = DEFAULT_URL_FOR_TEST
         cls.process = popen_launch_server(
             cls.model,
@@ -338,7 +338,7 @@ class TestMTPWithTBO(CustomTestCase):
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=[
                 "--tp-size",
-                "4",
+                "16",
                 "--enable-dp-attention",
                 "--dp-size",
                 "4",
@@ -354,8 +354,8 @@ class TestMTPWithTBO(CustomTestCase):
                 "3",
                 "--speculative-num-draft-tokens",
                 "3",
-                "--speculative-draft-model-path",
-                DEFAULT_MODEL_NAME_FOR_TEST_MLA_NEXTN,
+                # "--speculative-draft-model-path",
+                # DEFAULT_MODEL_NAME_FOR_TEST_MLA_NEXTN,
                 "--chunked-prefill-size",
                 "256",
                 "--cuda-graph-max-bs",
