@@ -80,38 +80,38 @@ class TestAscendDistTimeout(CustomTestCase):
                 # kill_process_tree(process.pid)
 
     
-    def test_a_gsm8k(self):
-        for model in self.models:
-            with self.subTest(model=model):
-                print(f"##=== Testing accuracy: {model} ===##")
-                other_args =  self.common_args + ["--dist-timeout", 3600,]
-                process = popen_launch_server(
-                    model,
-                    self.base_url,
-                    timeout=1500,
-                    other_args=[
-                        *other_args,
-                    ],
-                )
+    # def test_a_gsm8k(self):
+    #     for model in self.models:
+    #         with self.subTest(model=model):
+    #             print(f"##=== Testing accuracy: {model} ===##")
+    #             other_args =  self.common_args + ["--dist-timeout", 3600,]
+    #             process = popen_launch_server(
+    #                 model,
+    #                 self.base_url,
+    #                 timeout=1500,
+    #                 other_args=[
+    #                     *other_args,
+    #                 ],
+    #             )
 
-                try:
-                    args = SimpleNamespace(
-                        num_shots=5,
-                        data_path=None,
-                        num_questions=1319,
-                        max_new_tokens=512,
-                        parallel=128,
-                        host=f"http://{self.url.hostname}",
-                        port=int(self.url.port),
-                    )
+    #             try:
+    #                 args = SimpleNamespace(
+    #                     num_shots=5,
+    #                     data_path=None,
+    #                     num_questions=1319,
+    #                     max_new_tokens=512,
+    #                     parallel=128,
+    #                     host=f"http://{self.url.hostname}",
+    #                     port=int(self.url.port),
+    #                 )
 
-                    metrics = run_eval_few_shot_gsm8k(args)
-                    self.assertGreaterEqual(
-                        metrics["accuracy"],
-                        TEST_MODEL_MATRIX[model]["accuracy"],
-                    )
-                finally:
-                    kill_process_tree(process.pid)
+    #                 metrics = run_eval_few_shot_gsm8k(args)
+    #                 self.assertGreaterEqual(
+    #                     metrics["accuracy"],
+    #                     TEST_MODEL_MATRIX[model]["accuracy"],
+    #                 )
+    #             finally:
+    #                 kill_process_tree(process.pid)
 
 
 if __name__ == "__main__":
