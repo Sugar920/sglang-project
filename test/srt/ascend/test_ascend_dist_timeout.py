@@ -74,12 +74,17 @@ class TestAscendDistTimeout(CustomTestCase):
                     other_args=[
                         *other_args,
                     ],
+                    return_stdout_stderr=(out_log_file, err_log_file),
                 )
                 err_log_file.seek(0)
                 content = err_log_file.read()
                 print(content)
                 self.assertIn("DistNetworkerError: The client socket has timed out after 1000ms while trying", content)
-                # kill_process_tree(process.pid)
+                kill_process_tree(process.pid)
+                out_log_file.close()
+                err_log_file.close()
+                os.remove("./out_log.txt")
+                os.remove("./err_log.txt")
 
     
     # def test_a_gsm8k(self):
