@@ -20,7 +20,7 @@ TEST_MODEL_MATRIX = {
 }
 
 
-class TestAscendDeepSeekMTP(CustomTestCase):
+class TestAscendDistTimeout(CustomTestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -33,7 +33,7 @@ class TestAscendDeepSeekMTP(CustomTestCase):
             "--attention-backend",
             "ascend",
             "--quantization",
-            "w8a8_int8",
+            "modelslim",
             "--mem-fraction-static",
             0.8,
             "--disable-radix-cache",
@@ -41,37 +41,57 @@ class TestAscendDeepSeekMTP(CustomTestCase):
             32768,
             "--tp-size",
             16,
-            "--dp-size",
-            2,
-            "--enable-dp-attention",
-            "--speculative-algorithm",
-            "NEXTN",
-            "--speculative-num-steps",
-            1,
-            "--speculative-eagle-topk",
-            1,
-            "--speculative-num-draft-tokens",
-            2,
+            # "--dp-size",
+            # 2,
+            # "--enable-dp-attention",
+            # "--speculative-algorithm",
+            # "NEXTN",
+            # "--speculative-num-steps",
+            # 1,
+            # "--speculative-eagle-topk",
+            # 1,
+            # "--speculative-num-draft-tokens",
+            # 2,
         ]
 
-        cls.extra_envs = {
-            "SGLANG_NPU_USE_MLAPO": "1",
-            "SGLANG_ENABLE_SPEC_V2": "1",
-            "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": "1",
-        }
-        os.environ.update(cls.extra_envs)
+        # cls.extra_envs = {
+        #     "SGLANG_NPU_USE_MLAPO": "1",
+        #     "SGLANG_ENABLE_SPEC_V2": "1",
+        #     "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": "1",
+        # }
+        # os.environ.update(cls.extra_envs)
+    
+    def test_short_dist_timeout(self):
+        for model in self.models:
+            with self.subTest(model=model):
+                other_args =  self.common_args + ["--dist-tomeout", 50,]
+                process = popen_launch_server(
+                    model,
+                    self.base_url,
+                    other_args=[
+                        *other_args,
+                    ],
+                )
 
+                # self.assertGreaterEqual(
+                #     metrics["accuracy"],
+                #     TEST_MODEL_MATRIX[model]["accuracy"],
+                # )
+                finally:
+                    kill_process_tree(process.pid)
+
+    
     def test_a_gsm8k(self):
         for model in self.models:
             with self.subTest(model=model):
                 print(f"##=== Testing accuracy: {model} ===##")
-
+                other_args =  self.common_args + ["--dist-tomeout", 3600,]
                 process = popen_launch_server(
                     model,
                     self.base_url,
                     timeout=1500,
                     other_args=[
-                        *self.common_args,
+                        *other_args,
                     ],
                 )
 
