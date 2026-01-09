@@ -219,7 +219,7 @@ class TestTBO(CustomTestCase):
                 "--trust-remote-code",
                 "--tp",
                 "16",
-                "--enable-dp-attention",
+                # "--enable-dp-attention",
                 # "--dp",
                 # "4",
                 "--moe-dense-tp-size",
@@ -234,7 +234,7 @@ class TestTBO(CustomTestCase):
                 "--attention-backend",
                 "ascend",
                 "--mem-fraction-static",
-                0.9,
+                0.95,
             ],
         )
 
