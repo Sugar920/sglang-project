@@ -39,6 +39,8 @@ class TestPureDP(CustomTestCase):
                 "512",
                 "--mem-fraction-static",
                 "0.5",
+                "--attention-backend",
+                "ascend",
             ],
         )
 
@@ -84,6 +86,8 @@ class TestHybridDPTP(CustomTestCase):
                 "128",
                 "--max-running-requests",
                 "256",
+                "--attention-backend",
+                "ascend",
             ],
         )
 
@@ -126,6 +130,8 @@ class TestTP(CustomTestCase):
                 "128",
                 "--max-running-requests",
                 "128",
+                "--attention-backend",
+                "ascend",
             ],
         )
 
@@ -175,6 +181,8 @@ class TestNoGatherdBuffer(CustomTestCase):
                 "32",
                 "--max-running-requests",
                 "512",
+                "--attention-backend",
+                "ascend",
             ],
         )
 
@@ -223,6 +231,8 @@ class TestTBO(CustomTestCase):
                 "128",
                 "--max-running-requests",
                 "512",
+                "--attention-backend",
+                "ascend",
             ],
         )
 
@@ -280,6 +290,8 @@ class TestMTP(CustomTestCase):
                 "32",
                 "--max-running-requests",
                 "64",
+                "--attention-backend",
+                "ascend",
             ],
         )
 
@@ -350,6 +362,8 @@ class TestMTPWithTBO(CustomTestCase):
                 "32",
                 "--max-running-requests",
                 "128",
+                "--attention-backend",
+                "ascend",
             ],
         )
 
