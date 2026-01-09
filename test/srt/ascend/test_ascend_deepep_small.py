@@ -238,6 +238,10 @@ class TestTBO(CustomTestCase):
                 "--quantization",
                 "modelslim",
             ],
+            env={
+                    "HCCL_BUFFSIZE": "1000",
+                    **os.environ,
+                },
         )
 
     @classmethod
