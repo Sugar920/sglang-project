@@ -233,8 +233,10 @@ class TestTBO(CustomTestCase):
                 "512",
                 "--attention-backend",
                 "ascend",
-                "--mem-fraction-static",
-                0.7,
+                # "--mem-fraction-static",
+                # 0.7,
+                "--quantization",
+                "modelslim",
             ],
         )
 
