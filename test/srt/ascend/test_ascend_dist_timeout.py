@@ -64,7 +64,9 @@ class TestAscendDistTimeout(CustomTestCase):
     def test_short_dist_timeout(self):
         for model in self.models:
             with self.subTest(model=model):
-                other_args =  self.common_args + ["--dist-timeout", 10,]
+                other_args =  self.common_args + ["--dist-timeout", 1,]
+                out_log_file = open("./out_log.txt", "w+", encoding="utf-8")
+                err_log_file = open("./err_log.txt", "w+", encoding="utf-8")
                 process = popen_launch_server(
                     model,
                     self.base_url,
@@ -73,11 +75,10 @@ class TestAscendDistTimeout(CustomTestCase):
                         *other_args,
                     ],
                 )
-
-                # self.assertGreaterEqual(
-                #     metrics["accuracy"],
-                #     TEST_MODEL_MATRIX[model]["accuracy"],
-                # )
+                err_log_file.seek(0)
+                content = err_log_file.read()
+                print(content)
+                self.assertIn("DistNetworkerError: The client socket has timed out after 1000ms while trying", content)
                 # kill_process_tree(process.pid)
 
     
