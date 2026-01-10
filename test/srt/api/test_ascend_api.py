@@ -138,8 +138,7 @@ class TestAscendApi(CustomTestCase):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
-                # "rid": "req_002",
-                # "text": "The capital of France is",
+                "rid": "req_002",
                 "input_ids": [128000, 791, 6864, 315, 9822, 374],
                 "sampling_params": {
                     "temperature": 0,
@@ -148,6 +147,7 @@ class TestAscendApi(CustomTestCase):
                     # "skip_special_tokens": False,
                 },
                 "return_logprob": True,
+                "stream": True,
             },
         )
         self.assertEqual(response.status_code, 200)
