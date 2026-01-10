@@ -41,32 +41,15 @@ class TestAscendDistTimeout(CustomTestCase):
             32768,
             "--tp-size",
             16,
-            # "--dp-size",
-            # 2,
-            # "--enable-dp-attention",
-            # "--speculative-algorithm",
-            # "NEXTN",
-            # "--speculative-num-steps",
-            # 1,
-            # "--speculative-eagle-topk",
-            # 1,
-            # "--speculative-num-draft-tokens",
-            # 2,
+            "--dist-timeout",
+            3600,
         ]
 
-        # cls.extra_envs = {
-        #     "SGLANG_NPU_USE_MLAPO": "1",
-        #     "SGLANG_ENABLE_SPEC_V2": "1",
-        #     "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": "1",
-        # }
-        # os.environ.update(cls.extra_envs)
     
-    def test_short_dist_timeout(self):
+    def test_a_gsm8k(self):
         for model in self.models:
             with self.subTest(model=model):
-                other_args =  self.common_args + ["--dist-timeout", 1,]
-                out_log_file = open("./out_log.txt", "w+", encoding="utf-8")
-                err_log_file = open("./err_log.txt", "w+", encoding="utf-8")
+                print(f"##=== Testing accuracy: {model} ===##")
                 process = popen_launch_server(
                     model,
                     self.base_url,
@@ -74,51 +57,26 @@ class TestAscendDistTimeout(CustomTestCase):
                     other_args=[
                         *other_args,
                     ],
-                    return_stdout_stderr=(out_log_file, err_log_file),
                 )
-                err_log_file.seek(0)
-                content = err_log_file.read()
-                print(content)
-                self.assertIn("DistNetworkerError: The client socket has timed out after 1000ms while trying", content)
-                kill_process_tree(process.pid)
-                out_log_file.close()
-                err_log_file.close()
-                os.remove("./out_log.txt")
-                os.remove("./err_log.txt")
 
-    
-    # def test_a_gsm8k(self):
-    #     for model in self.models:
-    #         with self.subTest(model=model):
-    #             print(f"##=== Testing accuracy: {model} ===##")
-    #             other_args =  self.common_args + ["--dist-timeout", 3600,]
-    #             process = popen_launch_server(
-    #                 model,
-    #                 self.base_url,
-    #                 timeout=1500,
-    #                 other_args=[
-    #                     *other_args,
-    #                 ],
-    #             )
+                try:
+                    args = SimpleNamespace(
+                        num_shots=5,
+                        data_path=None,
+                        num_questions=1319,
+                        max_new_tokens=512,
+                        parallel=128,
+                        host=f"http://{self.url.hostname}",
+                        port=int(self.url.port),
+                    )
 
-    #             try:
-    #                 args = SimpleNamespace(
-    #                     num_shots=5,
-    #                     data_path=None,
-    #                     num_questions=1319,
-    #                     max_new_tokens=512,
-    #                     parallel=128,
-    #                     host=f"http://{self.url.hostname}",
-    #                     port=int(self.url.port),
-    #                 )
-
-    #                 metrics = run_eval_few_shot_gsm8k(args)
-    #                 self.assertGreaterEqual(
-    #                     metrics["accuracy"],
-    #                     TEST_MODEL_MATRIX[model]["accuracy"],
-    #                 )
-    #             finally:
-    #                 kill_process_tree(process.pid)
+                    metrics = run_eval_few_shot_gsm8k(args)
+                    self.assertGreaterEqual(
+                        metrics["accuracy"],
+                        TEST_MODEL_MATRIX[model]["accuracy"],
+                    )
+                finally:
+                    kill_process_tree(process.pid)
 
 
 if __name__ == "__main__":
