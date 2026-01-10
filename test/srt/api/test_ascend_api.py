@@ -122,6 +122,7 @@ class TestAscendApi(CustomTestCase):
                     "skip_special_tokens": False,
                 },
                 "return_logprob": True,
+                "stream": True,
                 "return_hidden_states": True,
             },
         )
