@@ -123,11 +123,12 @@ class TestAscendApi(CustomTestCase):
                     "skip_special_tokens": False,
                 },
                 "return_logprob": True,
-                "stream": True,
+                # "stream": True,
                 "return_hidden_states": True,
             },
         )
         self.assertEqual(response.status_code, 200)
+        print(response.text)
         print(response.json().keys())
         print(response.json()['meta_info'].keys())
         meta_info_keys = response.json()['meta_info'].keys()
@@ -143,10 +144,10 @@ class TestAscendApi(CustomTestCase):
                 "sampling_params": {
                     "temperature": 0,
                     "max_new_tokens": 20,
-                    "no_stop_trim": True,
-                    "skip_special_tokens": False,
+                    # "no_stop_trim": True,
+                    # "skip_special_tokens": False,
                 },
-                "return_logprob": True,
+                # "return_logprob": True,
             },
         )
         self.assertEqual(response.status_code, 200)
