@@ -132,7 +132,7 @@ class TestAscendApi(CustomTestCase):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
-                "rid": "req_001",
+                "rid": "req_002",
                 "input_ids": self.input_ids,
                 "sampling_params": {
                     "temperature": 0,
