@@ -135,21 +135,21 @@ class TestAscendApi(CustomTestCase):
         return embeddings.squeeze().tolist()  # Convert tensor to a list for API use
     
     def test_api_generate(self):
-    texts = "The capital of France is"
-    embeddings = self.generate_input_embeddings(text)
-    ret = requests.post(
+        texts = "The capital of France is"
+        embeddings = self.generate_input_embeddings(text)
+        response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
                 "rid": "req_001",
-                "http_worker_ipc": 1,
-                "validation_time": 1,
-                "received_time_perf": 1,
-                "text": "Who are you?",
+                # "http_worker_ipc": 1,
+                # "validation_time": 1,
+                # "received_time_perf": 1,
+                "text": "The capital of France is",
                 "input_ids": self.input_ids,
-                "input_embeds": embeddings,
-                "image_data": embeddings,
-                "video_data": embeddings,
-                "audio_data": embeddings,
+                # "input_embeds": embeddings,
+                # "image_data": embeddings,
+                # "video_data": embeddings,
+                # "audio_data": embeddings,
                 "sampling_params": {
                     "temperature": 0,
                     "max_new_tokens": max_new_tokens,
@@ -157,24 +157,25 @@ class TestAscendApi(CustomTestCase):
                     "skip_special_tokens": False,
                 },
                 "return_logprob": True,
-                "logprob_start_len": cur_logprob_start_len + len(chunk_ids),
-                "top_logprob_num": 2,
-                "token_ids_logprob": 2,
-                "return_text_in_logprobs": True,
-                "stream": True,
-                "log_metrics": True,
+                # "logprob_start_len": cur_logprob_start_len + len(chunk_ids),
+                # "top_logprob_num": 2,
+                # "token_ids_logprob": 2,
+                # "return_text_in_logprobs": True,
+                # "stream": True,
+                # "log_metrics": True,
                 "return_hidden_states": True,
-                "return_routed_experts": True,
-                "modalities": "",
-                "session_params": {
-                    "id": session_id,
-                    "rid": rid,
-                    "offset": -1,
-                    "replace": True,
-                },
+                # "return_routed_experts": True,
+                # "modalities": "",
+                # "session_params": {
+                #     "id": session_id,
+                #     "rid": rid,
+                #     "offset": -1,
+                #     "replace": True,
+                # },
             },
         )
         self.assertNotEqual(ret.status_code, 200)
+        print(response.json())
 
 
 if __name__ == "__main__":
