@@ -153,7 +153,7 @@ class TestAscendApi(CustomTestCase):
                 # "audio_data": embeddings,
                 "sampling_params": {
                     "temperature": 0,
-                    "max_new_tokens": max_new_tokens,
+                    "max_new_tokens": 20,
                     "no_stop_trim": True,
                     "skip_special_tokens": False,
                 },
