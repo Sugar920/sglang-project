@@ -30,7 +30,7 @@ class TestAscendApi(CustomTestCase):
             other_args=other_args,
         )
         cls.tokenizer = AutoTokenizer.from_pretrained(cls.model)
-        cls.input_ids = self.tokenizer(text, return_tensors="pt")["input_ids"]
+        cls.input_ids = cls.tokenizer(text, return_tensors="pt")["input_ids"]
 
     @classmethod
     def tearDownClass(cls):
