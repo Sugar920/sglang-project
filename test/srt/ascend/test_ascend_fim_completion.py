@@ -16,11 +16,12 @@ class TestFimCompletion(CustomTestCase):
     @classmethod
     def setUpClass(cls):
         #cls.model = "deepseek-ai/deepseek-coder-1.3b-base"
-        cls.model = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct"
+        # cls.model = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct"
         cls.model = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/deepseek-ai/deepseek-coder-1.3b-base"
         cls.base_url = DEFAULT_URL_FOR_TEST
         cls.api_key = "sk-123456"
-        other_args = ["--completion-template", "deepseek_coder", "--attention-backend", "ascend", "--disable-cuda-graph", "--mem-fraction-static", 0.8]
+        # other_args = ["--completion-template", "deepseek_coder", "--attention-backend", "ascend", "--disable-cuda-graph", "--mem-fraction-static", 0.8]
+        other_args = ["--completion-template", "./deepseek_coder.json", "--attention-backend", "ascend", "--disable-cuda-graph", "--mem-fraction-static", 0.8]
         cls.process = popen_launch_server(
             cls.model,
             cls.base_url,
