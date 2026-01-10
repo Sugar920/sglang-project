@@ -106,51 +106,14 @@ class TestAscendApi(CustomTestCase):
         self.assertEqual(response.json()['owned_by'], "sglang")
         self.assertEqual(response.json()['root'], self.model)
         self.assertEqual(response.json()['max_model_len'], 131072)
-
-
-# class TestGenerateApi(CustomTestCase):
-#     @classmethod
-#     def setUpClass(cls):
-#         cls.model = "/root/.cache/modelscope/hub/models/LLM-Research/Llama-3.2-1B-Instruct"
-#         other_args = (
-#             [
-#                 "--attention-backend",
-#                 "ascend",
-#             ]
-#         )
-#         cls.process = popen_launch_server(
-#             cls.model,
-#             DEFAULT_URL_FOR_TEST,
-#             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
-#             other_args=other_args,
-#         )
-
-#     @classmethod
-#     def tearDownClass(cls):
-#         kill_process_tree(cls.process.pid)    
-
-    # def generate_input_embeddings(self, text):
-    #     """Generate input embeddings for a given text."""
-    #     input_ids = self.tokenizer(text, return_tensors="pt")["input_ids"]
-    #     embeddings = self.ref_model.get_input_embeddings()(input_ids)
-    #     return embeddings.squeeze().tolist()  # Convert tensor to a list for API use
     
     def test_api_generate(self):
-        # text = "The capital of France is"
-        # embeddings = self.generate_input_embeddings(text)
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
                 "rid": "req_001",
-                # "http_worker_ipc": 1,
-                # "validation_time": 1,
-                # "received_time_perf": 1,
                 "text": "The capital of France is",
-                "input_ids": self.input_ids,
-                # "input_embeds": embeddings,
-                # "image_data": embeddings,
-                # "video_data": embeddings,
-                # "audio_data": embeddings,
+                # "input_ids": self.input_ids,
                 "sampling_params": {
                     "temperature": 0,
                     "max_new_tokens": 20,
@@ -158,21 +121,7 @@ class TestAscendApi(CustomTestCase):
                     "skip_special_tokens": False,
                 },
                 "return_logprob": True,
-                # "logprob_start_len": cur_logprob_start_len + len(chunk_ids),
-                # "top_logprob_num": 2,
-                # "token_ids_logprob": 2,
-                # "return_text_in_logprobs": True,
-                # "stream": True,
-                # "log_metrics": True,
                 "return_hidden_states": True,
-                # "return_routed_experts": True,
-                # "modalities": "",
-                # "session_params": {
-                #     "id": session_id,
-                #     "rid": rid,
-                #     "offset": -1,
-                #     "replace": True,
-                # },
             },
         )
         self.assertNotEqual(ret.status_code, 200)
