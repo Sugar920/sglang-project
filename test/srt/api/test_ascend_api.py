@@ -125,7 +125,26 @@ class TestAscendApi(CustomTestCase):
                 # "return_hidden_states": True,
             },
         )
-        self.assertNotEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
+        print(response.json())
+        
+        # test input_ids
+        response = requests.post(
+            f"{DEFAULT_URL_FOR_TEST}/generate",
+            json={
+                "rid": "req_001",
+                "input_ids": self.input_ids,
+                "sampling_params": {
+                    "temperature": 0,
+                    "max_new_tokens": 20,
+                    "no_stop_trim": True,
+                    "skip_special_tokens": False,
+                },
+                "return_logprob": True,
+                # "return_hidden_states": True,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
         print(response.json())
 
 
