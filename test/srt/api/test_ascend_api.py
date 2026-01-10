@@ -16,8 +16,6 @@ from sglang.test.test_utils import (
 class TestAscendApi(CustomTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.tokenizer = AutoTokenizer.from_pretrained(cls.model)
-        cls.input_ids = self.tokenizer(text, return_tensors="pt")["input_ids"]
         cls.model = "/root/.cache/modelscope/hub/models/LLM-Research/Llama-3.2-1B-Instruct"
         other_args = (
             [
@@ -31,6 +29,8 @@ class TestAscendApi(CustomTestCase):
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=other_args,
         )
+        cls.tokenizer = AutoTokenizer.from_pretrained(cls.model)
+        cls.input_ids = self.tokenizer(text, return_tensors="pt")["input_ids"]
 
     @classmethod
     def tearDownClass(cls):
