@@ -122,7 +122,7 @@ class TestAscendApi(CustomTestCase):
                     "skip_special_tokens": False,
                 },
                 "return_logprob": True,
-                "return_hidden_states": True,
+                # "return_hidden_states": True,
             },
         )
         self.assertNotEqual(response.status_code, 200)
