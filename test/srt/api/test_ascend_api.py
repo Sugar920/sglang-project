@@ -140,14 +140,14 @@ class TestAscendApi(CustomTestCase):
             json={
                 # "rid": "req_002",
                 # "text": "The capital of France is",
-                "input_ids": self.input_ids,
+                "input_ids": [128000, 791, 6864, 315, 9822, 374],
                 "sampling_params": {
                     "temperature": 0,
                     "max_new_tokens": 20,
                     # "no_stop_trim": True,
                     # "skip_special_tokens": False,
                 },
-                # "return_logprob": True,
+                "return_logprob": True,
             },
         )
         self.assertEqual(response.status_code, 200)
