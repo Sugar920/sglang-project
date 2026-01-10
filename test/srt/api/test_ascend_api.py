@@ -129,15 +129,15 @@ class TestAscendApi(CustomTestCase):
 #     def tearDownClass(cls):
 #         kill_process_tree(cls.process.pid)    
 
-    def generate_input_embeddings(self, text):
-        """Generate input embeddings for a given text."""
-        input_ids = self.tokenizer(text, return_tensors="pt")["input_ids"]
-        embeddings = self.ref_model.get_input_embeddings()(input_ids)
-        return embeddings.squeeze().tolist()  # Convert tensor to a list for API use
+    # def generate_input_embeddings(self, text):
+    #     """Generate input embeddings for a given text."""
+    #     input_ids = self.tokenizer(text, return_tensors="pt")["input_ids"]
+    #     embeddings = self.ref_model.get_input_embeddings()(input_ids)
+    #     return embeddings.squeeze().tolist()  # Convert tensor to a list for API use
     
     def test_api_generate(self):
-        text = "The capital of France is"
-        embeddings = self.generate_input_embeddings(text)
+        # text = "The capital of France is"
+        # embeddings = self.generate_input_embeddings(text)
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
