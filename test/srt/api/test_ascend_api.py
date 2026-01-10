@@ -128,7 +128,6 @@ class TestAscendApi(CustomTestCase):
             },
         )
         self.assertEqual(response.status_code, 200)
-        print(response.text)
         print(response.json().keys())
         print(response.json()['meta_info'].keys())
         meta_info_keys = response.json()['meta_info'].keys()
@@ -139,7 +138,8 @@ class TestAscendApi(CustomTestCase):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
-                "rid": "req_002",
+                # "rid": "req_002",
+                # "text": "The capital of France is",
                 "input_ids": self.input_ids,
                 "sampling_params": {
                     "temperature": 0,
