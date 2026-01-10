@@ -33,6 +33,7 @@ class TestAscendApi(CustomTestCase):
         text = "The capital of France is"
         cls.tokenizer = AutoTokenizer.from_pretrained(cls.model)
         cls.input_ids = cls.tokenizer(text, return_tensors="pt")["input_ids"]
+        print("input_ids: ", cls.input_ids)
 
     @classmethod
     def tearDownClass(cls):
