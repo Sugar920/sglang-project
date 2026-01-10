@@ -35,7 +35,7 @@ class TestAscendDistTimeout(CustomTestCase):
             "--quantization",
             "modelslim",
             "--mem-fraction-static",
-            0.8,
+            0.9,
             "--disable-radix-cache",
             "--chunked-prefill-size",
             32768,
