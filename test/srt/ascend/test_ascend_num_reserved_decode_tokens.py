@@ -18,7 +18,7 @@ from sglang.test.test_utils import (
 )
 
 
-class TestDisaggregationDecodeTp(TestDisaggregationBase):
+class TestNumReservedDecodeTokens(TestDisaggregationBase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
