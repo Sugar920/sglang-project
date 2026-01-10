@@ -92,7 +92,7 @@ class TestDisaggregationDecodeTp(TestDisaggregationBase):
 
     def test_mmlu(self):
         args = SimpleNamespace(
-            base_url=self.base_url,
+            base_url=DEFAULT_URL_FOR_TEST,
             model=self.model,
             eval_name="mmlu",
             num_examples=64,
