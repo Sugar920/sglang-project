@@ -128,6 +128,9 @@ class TestAscendApi(CustomTestCase):
         )
         self.assertEqual(response.status_code, 200)
         print(response.json().keys())
+        print(response.json()['meta_info'].keys())
+        meta_info_keys = response.json()['meta_info'].keys()
+        self.assertIn("hidden_states", meta_info_keys)
         
         
         # test input_ids
