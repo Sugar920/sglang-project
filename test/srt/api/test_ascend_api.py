@@ -29,6 +29,7 @@ class TestAscendApi(CustomTestCase):
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=other_args,
         )
+        text = "The capital of France is"
         cls.tokenizer = AutoTokenizer.from_pretrained(cls.model)
         cls.input_ids = cls.tokenizer(text, return_tensors="pt")["input_ids"]
 
@@ -135,7 +136,7 @@ class TestAscendApi(CustomTestCase):
         return embeddings.squeeze().tolist()  # Convert tensor to a list for API use
     
     def test_api_generate(self):
-        texts = "The capital of France is"
+        text = "The capital of France is"
         embeddings = self.generate_input_embeddings(text)
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
