@@ -55,7 +55,7 @@ class TestAscendDistTimeout(CustomTestCase):
                     self.base_url,
                     timeout=1500,
                     other_args=[
-                        *other_args,
+                        *self.common_args,
                     ],
                 )
 
