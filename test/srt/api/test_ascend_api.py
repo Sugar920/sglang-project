@@ -124,7 +124,7 @@ class TestAscendApi(CustomTestCase):
                 "return_hidden_states": True,
             },
         )
-        self.assertNotEqual(ret.status_code, 200)
+        self.assertNotEqual(response.status_code, 200)
         print(response.json())
 
 
