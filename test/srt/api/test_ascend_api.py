@@ -122,11 +122,12 @@ class TestAscendApi(CustomTestCase):
                     "skip_special_tokens": False,
                 },
                 "return_logprob": True,
-                # "return_hidden_states": True,
+                "return_hidden_states": True,
             },
         )
         self.assertEqual(response.status_code, 200)
         print(response.json())
+        
         
         # test input_ids
         response = requests.post(
@@ -141,7 +142,7 @@ class TestAscendApi(CustomTestCase):
                     "skip_special_tokens": False,
                 },
                 "return_logprob": True,
-                # "return_hidden_states": True,
+                "return_hidden_states": True,
             },
         )
         self.assertEqual(response.status_code, 200)
