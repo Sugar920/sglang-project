@@ -21,6 +21,7 @@ class TestAscendApi(CustomTestCase):
             [
                 "--attention-backend",
                 "ascend",
+                "--enable-return-hidden-states",
             ]
         )
         cls.process = popen_launch_server(
