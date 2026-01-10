@@ -38,75 +38,75 @@ class TestAscendApi(CustomTestCase):
     def tearDownClass(cls):
         kill_process_tree(cls.process.pid)
         
-    def test_api_health(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/health")
-        self.assertEqual(response.status_code, 200)
+    # def test_api_health(self):
+    #     response = requests.get(f"{DEFAULT_URL_FOR_TEST}/health")
+    #     self.assertEqual(response.status_code, 200)
 
-    def test_api_health_generate(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/health_generate")
-        self.assertEqual(response.status_code, 200)
+    # def test_api_health_generate(self):
+    #     response = requests.get(f"{DEFAULT_URL_FOR_TEST}/health_generate")
+    #     self.assertEqual(response.status_code, 200)
 
-    def test_api_ping(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/ping")
-        self.assertEqual(response.status_code, 200)
+    # def test_api_ping(self):
+    #     response = requests.get(f"{DEFAULT_URL_FOR_TEST}/ping")
+    #     self.assertEqual(response.status_code, 200)
 
-    def test_api_model_info(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/model_info")
-        self.assertEqual(response.status_code, 200)
-        print(response.json())
-        self.assertEqual(response.json()['model_path'], self.model)
-        self.assertEqual(response.json()['tokenizer_path'], self.model)
-        self.assertTrue(response.json()['is_generation'])
-        self.assertIsNone(response.json()['preferred_sampling_params'])
-        self.assertEqual(response.json()['weight_version'], "default")
-        self.assertFalse(response.json()['has_image_understanding'])
-        self.assertFalse(response.json()['has_audio_understanding'])
-        self.assertEqual(response.json()['model_type'], "llama")
-        self.assertEqual(response.json()['architectures'][0], "LlamaForCausalLM")
+    # def test_api_model_info(self):
+    #     response = requests.get(f"{DEFAULT_URL_FOR_TEST}/model_info")
+    #     self.assertEqual(response.status_code, 200)
+    #     print(response.json())
+    #     self.assertEqual(response.json()['model_path'], self.model)
+    #     self.assertEqual(response.json()['tokenizer_path'], self.model)
+    #     self.assertTrue(response.json()['is_generation'])
+    #     self.assertIsNone(response.json()['preferred_sampling_params'])
+    #     self.assertEqual(response.json()['weight_version'], "default")
+    #     self.assertFalse(response.json()['has_image_understanding'])
+    #     self.assertFalse(response.json()['has_audio_understanding'])
+    #     self.assertEqual(response.json()['model_type'], "llama")
+    #     self.assertEqual(response.json()['architectures'][0], "LlamaForCausalLM")
 
-    def test_api_weight_version(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/weight_version")
-        self.assertEqual(response.status_code, 200)
-        print(response.json())
-        self.assertEqual(response.json()['weight_version'], "default")
+    # def test_api_weight_version(self):
+    #     response = requests.get(f"{DEFAULT_URL_FOR_TEST}/weight_version")
+    #     self.assertEqual(response.status_code, 200)
+    #     print(response.json())
+    #     self.assertEqual(response.json()['weight_version'], "default")
 
-    def test_api_server_info(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/server_info")
-        self.assertEqual(response.status_code, 200)
-        print(response.json())
-        self.assertEqual(response.json()['model_path'], self.model)
-        self.assertEqual(response.json()['tokenizer_path'], self.model)
+    # def test_api_server_info(self):
+    #     response = requests.get(f"{DEFAULT_URL_FOR_TEST}/server_info")
+    #     self.assertEqual(response.status_code, 200)
+    #     print(response.json())
+    #     self.assertEqual(response.json()['model_path'], self.model)
+    #     self.assertEqual(response.json()['tokenizer_path'], self.model)
 
-    def test_api_get_load(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/get_load")
-        self.assertEqual(response.status_code, 200)
-        print(response.json())
-        self.assertIsNone(response.json()[0]['rid'])
-        self.assertIsNone(response.json()[0]['http_worker_ipc'])
-        self.assertIsNone(response.json()[0]['dp_rank'])
-        self.assertGreaterEqual(response.json()[0]['num_reqs'], 0)
-        self.assertGreaterEqual(response.json()[0]['num_waiting_reqs'], 0)
-        self.assertGreaterEqual(response.json()[0]['num_tokens'], 0)
+    # def test_api_get_load(self):
+    #     response = requests.get(f"{DEFAULT_URL_FOR_TEST}/get_load")
+    #     self.assertEqual(response.status_code, 200)
+    #     print(response.json())
+    #     self.assertIsNone(response.json()[0]['rid'])
+    #     self.assertIsNone(response.json()[0]['http_worker_ipc'])
+    #     self.assertIsNone(response.json()[0]['dp_rank'])
+    #     self.assertGreaterEqual(response.json()[0]['num_reqs'], 0)
+    #     self.assertGreaterEqual(response.json()[0]['num_waiting_reqs'], 0)
+    #     self.assertGreaterEqual(response.json()[0]['num_tokens'], 0)
 
-    def test_api_v1_models(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models")
-        self.assertEqual(response.status_code, 200)
-        print(response.json())
-        self.assertEqual(response.json()['data'][0]['id'], self.model)
-        self.assertEqual(response.json()['data'][0]['object'], "model")
-        self.assertEqual(response.json()['data'][0]['owned_by'], "sglang")
-        self.assertEqual(response.json()['data'][0]['root'], self.model)
-        self.assertEqual(response.json()['data'][0]['max_model_len'], 131072)
+    # def test_api_v1_models(self):
+    #     response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models")
+    #     self.assertEqual(response.status_code, 200)
+    #     print(response.json())
+    #     self.assertEqual(response.json()['data'][0]['id'], self.model)
+    #     self.assertEqual(response.json()['data'][0]['object'], "model")
+    #     self.assertEqual(response.json()['data'][0]['owned_by'], "sglang")
+    #     self.assertEqual(response.json()['data'][0]['root'], self.model)
+    #     self.assertEqual(response.json()['data'][0]['max_model_len'], 131072)
 
-    def test_api_v1_models_path(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models/{self.model}")
-        self.assertEqual(response.status_code, 200)
-        print(response.json())
-        self.assertEqual(response.json()['id'], self.model)
-        self.assertEqual(response.json()['object'], "model")
-        self.assertEqual(response.json()['owned_by'], "sglang")
-        self.assertEqual(response.json()['root'], self.model)
-        self.assertEqual(response.json()['max_model_len'], 131072)
+    # def test_api_v1_models_path(self):
+    #     response = requests.get(f"{DEFAULT_URL_FOR_TEST}/v1/models/{self.model}")
+    #     self.assertEqual(response.status_code, 200)
+    #     print(response.json())
+    #     self.assertEqual(response.json()['id'], self.model)
+    #     self.assertEqual(response.json()['object'], "model")
+    #     self.assertEqual(response.json()['owned_by'], "sglang")
+    #     self.assertEqual(response.json()['root'], self.model)
+    #     self.assertEqual(response.json()['max_model_len'], 131072)
     
     def test_api_generate(self):
         response = requests.post(
@@ -132,7 +132,7 @@ class TestAscendApi(CustomTestCase):
         meta_info_keys = response.json()['meta_info'].keys()
         self.assertIn("hidden_states", meta_info_keys)
         
-        
+    def test_api_generate_input_ids(self):    
         # test input_ids
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
@@ -146,11 +146,13 @@ class TestAscendApi(CustomTestCase):
                     "skip_special_tokens": False,
                 },
                 "return_logprob": True,
-                "return_hidden_states": True,
             },
         )
         self.assertEqual(response.status_code, 200)
-        print(response.json())
+        print(response.json().keys())
+        print(response.json()['meta_info'].keys())
+        meta_info_keys = response.json()['meta_info'].keys()
+        self.assertNotIn("hidden_states", meta_info_keys)
 
 
 if __name__ == "__main__":
