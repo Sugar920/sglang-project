@@ -126,7 +126,7 @@ class TestAscendApi(CustomTestCase):
             },
         )
         self.assertEqual(response.status_code, 200)
-        print(response.json())
+        print(response.json().keys())
         
         
         # test input_ids
