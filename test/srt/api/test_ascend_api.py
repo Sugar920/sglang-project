@@ -144,7 +144,7 @@ class TestAscendApi(CustomTestCase):
                 "rid": "req_002",
                 "input_ids": self.input_ids,
                 "sampling_params": {
-                    "temperature": 10,
+                    "temperature": 0,
                     "max_new_tokens": 10,
                 },
                 "return_logprob": False,
@@ -156,7 +156,8 @@ class TestAscendApi(CustomTestCase):
         print(response.text)
         lines = response.text.strip().split('\n')
         print("lines: ", lines)
-        json_data = response.text[6:]
+        self.assertGreaterEqual(len(lines), 10)
+        json_data = lines[-3][6:]
         data = json.loads(json_data)
         print(data.keys())
         print(data['meta_info'].keys())
