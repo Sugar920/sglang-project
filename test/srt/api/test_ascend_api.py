@@ -1,4 +1,5 @@
 import unittest
+import json
 
 import requests
 from transformers import AutoModelForCausalLM, AutoTokenizer
