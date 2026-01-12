@@ -110,6 +110,7 @@ class TestAscendApi(CustomTestCase):
 class TestApiGenerate(TestAscendApi):
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         text = "The capital of France is"
         cls.tokenizer = AutoTokenizer.from_pretrained(cls.model)
         cls.input_ids = cls.tokenizer(text, return_tensors="pt")["input_ids"][0].tolist()
