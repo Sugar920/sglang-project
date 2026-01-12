@@ -107,15 +107,13 @@ class TestAscendApi(CustomTestCase):
         self.assertEqual(response.json()['max_model_len'], 131072)
 
 
-class TestApiGenerate(CustomTestCase):
-    text = "The capital of France is"
-    texts = [
-        "The capital of France is",
-        "What is the best time of year to visit Japan for cherry blossoms?",
-    ]
-    cls.tokenizer = AutoTokenizer.from_pretrained(cls.model)
-    cls.input_ids = cls.tokenizer(text, return_tensors="pt")["input_ids"][0].tolist()
-    print("input_ids: ", cls.input_ids)
+class TestApiGenerate(TestAscendApi):
+    @classmethod
+    def setUpClass(cls):
+        text = "The capital of France is"
+        cls.tokenizer = AutoTokenizer.from_pretrained(cls.model)
+        cls.input_ids = cls.tokenizer(text, return_tensors="pt")["input_ids"][0].tolist()
+        print("input_ids: ", cls.input_ids)
 
     def test_api_generate_single_text(self):
         response = requests.post(
