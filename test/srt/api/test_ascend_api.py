@@ -147,7 +147,7 @@ class TestAscendApi(CustomTestCase):
                     "max_new_tokens": 10,
                 },
                 "return_logprob": False,
-                # "stream": True,
+                "stream": True,
                 "return_hidden_states": False,
             },
         )
