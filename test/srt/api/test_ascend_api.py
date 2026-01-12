@@ -110,7 +110,7 @@ class TestAscendApi(CustomTestCase):
     #     self.assertEqual(response.json()['max_model_len'], 131072)
     
     def test_api_generate(self):
-        print("test text")
+        print("========== test text ==========")
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
@@ -136,7 +136,7 @@ class TestAscendApi(CustomTestCase):
         self.assertIn("output_token_logprobs", meta_info_keys)
         self.assertIn("hidden_states", meta_info_keys)
 
-        print("test input_ids")
+        print("========== test input_ids ==========")
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
@@ -153,12 +153,14 @@ class TestAscendApi(CustomTestCase):
         )
         self.assertEqual(response.status_code, 200)
         print(response.text)
-        print(response.text.keys())
-        print(response.text['meta_info'].keys())
-        meta_info_keys = response.text['meta_info'].keys()
-        self.assertEqual("req_002", response.text['meta_info']['id'])
-        self.assertIn("Paris", response.text['text'])
-        self.assertEqual(10, response.text['meta_info']['completion_tokens'])
+        json_data = response.text[6:]
+        data = json.loads(json_data)
+        print(data.keys())
+        print(data['meta_info'].keys())
+        meta_info_keys = data['meta_info'].keys()
+        self.assertEqual("req_002", data['meta_info']['id'])
+        self.assertIn("Paris", data['text'])
+        self.assertEqual(10, data['meta_info']['completion_tokens'])
         self.assertNotIn("input_token_logprobs", meta_info_keys)
         self.assertNotIn("output_token_logprobs", meta_info_keys)
         self.assertNotIn("hidden_states", meta_info_keys)
