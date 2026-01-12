@@ -32,7 +32,7 @@ class TestAscendApi(CustomTestCase):
         )
         text = "The capital of France is"
         cls.tokenizer = AutoTokenizer.from_pretrained(cls.model)
-        cls.input_ids = cls.tokenizer(text, return_tensors="pt")["input_ids"]
+        cls.input_ids = cls.tokenizer(text, return_tensors="pt")["input_ids"][0].tolist()
         print("input_ids: ", cls.input_ids)
 
     @classmethod
@@ -110,20 +110,18 @@ class TestAscendApi(CustomTestCase):
     #     self.assertEqual(response.json()['max_model_len'], 131072)
     
     def test_api_generate(self):
+        print("test text")
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
                 "rid": "req_001",
                 "text": "The capital of France is",
-                # "input_ids": self.input_ids,
                 "sampling_params": {
                     "temperature": 0,
                     "max_new_tokens": 20,
-                    "no_stop_trim": True,
-                    "skip_special_tokens": False,
                 },
                 "return_logprob": True,
-                # "stream": True,
+                "stream": False,
                 "return_hidden_states": True,
             },
         )
@@ -131,29 +129,37 @@ class TestAscendApi(CustomTestCase):
         print(response.json().keys())
         print(response.json()['meta_info'].keys())
         meta_info_keys = response.json()['meta_info'].keys()
+        self.assertEqual("req_001", response.json()['meta_info']['id'])
+        self.assertIn("Paris", response.json()['text'])
+        self.assertEqual(20, response.json()['meta_info']['completion_tokens'])
+        self.assertIn("input_token_logprobs", meta_info_keys)
+        self.assertIn("output_token_logprobs", meta_info_keys)
         self.assertIn("hidden_states", meta_info_keys)
-        
-    def test_api_generate_input_ids(self):    
-        # test input_ids
+
+        print("test input_ids")
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
                 "rid": "req_002",
-                "input_ids": [128000, 791, 6864, 315, 9822, 374],
+                # "input_ids": [128000, 791, 6864, 315, 9822, 374],
+                "input_ids": self.input_ids,
                 "sampling_params": {
                     "temperature": 0,
-                    "max_new_tokens": 20,
-                    # "no_stop_trim": True,
-                    # "skip_special_tokens": False,
+                    "max_new_tokens": 10,
                 },
-                "return_logprob": True,
-                "stream": True,
+                "return_logprob": False,
+                # "stream": True,
+                "return_hidden_states": False,
             },
         )
         self.assertEqual(response.status_code, 200)
         # print(response.json().keys())
         # print(response.json()['meta_info'].keys())
         # meta_info_keys = response.json()['meta_info'].keys()
+        self.assertEqual("req_002", response.json()['meta_info']['id'])
+        self.assertEqual(10, response.json()['meta_info']['completion_tokens'])
+        self.assertNotIn("input_token_logprobs", meta_info_keys)
+        self.assertNotIn("output_token_logprobs", meta_info_keys)
         # self.assertNotIn("hidden_states", meta_info_keys)
 
 
