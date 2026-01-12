@@ -143,7 +143,7 @@ class TestAscendApi(CustomTestCase):
                 "rid": "req_002",
                 "input_ids": self.input_ids,
                 "sampling_params": {
-                    "temperature": 0,
+                    "temperature": 10,
                     "max_new_tokens": 10,
                 },
                 "return_logprob": False,
