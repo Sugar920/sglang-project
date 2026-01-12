@@ -147,9 +147,9 @@ class TestAscendApi(CustomTestCase):
                     "temperature": 0,
                     "max_new_tokens": 20,
                 },
-                "return_logprob": True,
+                "return_logprob": False,
                 "stream": False,
-                "return_hidden_states": True,
+                "return_hidden_states": False,
             },
         )
         self.assertEqual(response.status_code, 200)
