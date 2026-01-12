@@ -1,5 +1,6 @@
 import unittest
 import json
+import time
 
 import requests
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -154,6 +155,7 @@ class TestAscendApi(CustomTestCase):
         )
         self.assertEqual(response.status_code, 200)
         print(response.text)
+        time.sleep(5)
         json_data = response.text[6:]
         data = json.loads(json_data)
         print(data.keys())
