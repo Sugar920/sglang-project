@@ -141,7 +141,6 @@ class TestAscendApi(CustomTestCase):
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
                 "rid": "req_002",
-                # "input_ids": [128000, 791, 6864, 315, 9822, 374],
                 "input_ids": self.input_ids,
                 "sampling_params": {
                     "temperature": 0,
@@ -153,6 +152,7 @@ class TestAscendApi(CustomTestCase):
             },
         )
         self.assertEqual(response.status_code, 200)
+        print(response.json())
         print(response.json().keys())
         print(response.json()['meta_info'].keys())
         meta_info_keys = response.json()['meta_info'].keys()
@@ -162,8 +162,6 @@ class TestAscendApi(CustomTestCase):
         self.assertNotIn("input_token_logprobs", meta_info_keys)
         self.assertNotIn("output_token_logprobs", meta_info_keys)
         self.assertNotIn("hidden_states", meta_info_keys)
-        print(response.json())
-        print(response.text)
 
 
 if __name__ == "__main__":
