@@ -161,7 +161,9 @@ class TestAscendApi(CustomTestCase):
         self.assertEqual(10, response.json()['meta_info']['completion_tokens'])
         self.assertNotIn("input_token_logprobs", meta_info_keys)
         self.assertNotIn("output_token_logprobs", meta_info_keys)
-        # self.assertNotIn("hidden_states", meta_info_keys)
+        self.assertNotIn("hidden_states", meta_info_keys)
+        print(response.json())
+        print(response.text)
 
 
 if __name__ == "__main__":
