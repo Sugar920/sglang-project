@@ -109,7 +109,7 @@ class TestAscendApi(CustomTestCase):
 
 class TestApiGenerate(CustomTestCase):
     text = "The capital of France is"
-    cls.texts = [
+    texts = [
         "The capital of France is",
         "What is the best time of year to visit Japan for cherry blossoms?",
     ]
