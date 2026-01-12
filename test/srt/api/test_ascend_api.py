@@ -31,10 +31,6 @@ class TestAscendApi(CustomTestCase):
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=other_args,
         )
-        text = "The capital of France is"
-        cls.tokenizer = AutoTokenizer.from_pretrained(cls.model)
-        cls.input_ids = cls.tokenizer(text, return_tensors="pt")["input_ids"][0].tolist()
-        print("input_ids: ", cls.input_ids)
 
     @classmethod
     def tearDownClass(cls):
@@ -109,9 +105,19 @@ class TestAscendApi(CustomTestCase):
         self.assertEqual(response.json()['owned_by'], "sglang")
         self.assertEqual(response.json()['root'], self.model)
         self.assertEqual(response.json()['max_model_len'], 131072)
-    
-    def test_api_generate(self):
-        print("========== test text ==========")
+
+
+class TestApiGenerate(CustomTestCase):
+    text = "The capital of France is"
+    cls.texts = [
+        "The capital of France is",
+        "What is the best time of year to visit Japan for cherry blossoms?",
+    ]
+    cls.tokenizer = AutoTokenizer.from_pretrained(cls.model)
+    cls.input_ids = cls.tokenizer(text, return_tensors="pt")["input_ids"][0].tolist()
+    print("input_ids: ", cls.input_ids)
+
+    def test_api_generate_single_text(self):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
@@ -137,7 +143,32 @@ class TestAscendApi(CustomTestCase):
         self.assertIn("output_token_logprobs", meta_info_keys)
         self.assertIn("hidden_states", meta_info_keys)
 
-        print("========== test temperature ==========")
+    def test_api_generate_batch_texts(self):
+        rids = ["req_1", "req_2"]
+        texts = [
+        "The capital of France is",
+        "What is the best time of year to visit Japan for cherry blossoms?",
+        ]
+        response = requests.post(
+            f"{DEFAULT_URL_FOR_TEST}/generate",
+            json={
+                "rid": rids,
+                "text": texts,
+                "sampling_params": {
+                    "temperature": 0,
+                    "max_new_tokens": 20,
+                },
+                "return_logprob": True,
+                "stream": False,
+                "return_hidden_states": True,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        print(response.json())
+        # self.assertEqual("req_001", response.json()['meta_info']['id'])
+        # self.assertIn("Paris", response.json()['text'])
+
+    def test_api_generate_temperature(self):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
@@ -165,8 +196,8 @@ class TestAscendApi(CustomTestCase):
         print(response.json())
         text2 = response.json()['text']
         self.assertNotEqual(text2, text1)
-
-        print("========== test input_ids ==========")
+        
+    def test_api_generate_input_ids(self):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
