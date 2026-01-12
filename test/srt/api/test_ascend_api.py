@@ -154,8 +154,11 @@ class TestAscendApi(CustomTestCase):
         )
         self.assertEqual(response.status_code, 200)
         print(response.json())
-        # self.assertEqual("req_001", response.json()['meta_info']['id'])
-        # self.assertIn("Paris", response.json()['text'])
+        self.assertEqual("req_1", response.json()[0]['meta_info']['id'])
+        self.assertIn("Paris", response.json()[0]['text'])
+        self.assertEqual("req_2", response.json()[1]['meta_info']['id'])
+        self.assertIn("Japan", response.json()[1]['text'])
+        
 
     # def test_api_generate_temperature(self):
     #     response = requests.post(
