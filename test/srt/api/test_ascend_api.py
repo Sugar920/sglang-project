@@ -131,11 +131,28 @@ class TestAscendApi(CustomTestCase):
         print(response.json()['meta_info'].keys())
         meta_info_keys = response.json()['meta_info'].keys()
         self.assertEqual("req_001", response.json()['meta_info']['id'])
-        self.assertIn("Paris", response.json()['text'])
+        text1 = response.json()['text']
+        self.assertIn("Paris", text1)
         self.assertEqual(20, response.json()['meta_info']['completion_tokens'])
         self.assertIn("input_token_logprobs", meta_info_keys)
         self.assertIn("output_token_logprobs", meta_info_keys)
         self.assertIn("hidden_states", meta_info_keys)
+
+        print("========== test temperature ==========")
+        response = requests.post(
+            f"{DEFAULT_URL_FOR_TEST}/generate",
+            json={
+                "text": "The capital of France is",
+                "sampling_params": {
+                    "temperature": 5,
+                    "max_new_tokens": 20,
+                },
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        print(response.json())
+        text2 = response.json()['text']
+        self.assertNotEqual(text2, text1)
 
         print("========== test input_ids ==========")
         response = requests.post(
